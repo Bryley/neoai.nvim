@@ -2,6 +2,7 @@
 
 local M = {}
 
+---Executes command getting stdout chunks
 ---@param cmd string
 ---@param args string[]
 ---@param on_stdout_chunk fun(chunk: string): nil
@@ -49,6 +50,15 @@ function M.exec (cmd, args, on_stdout_chunk, on_complete)
         stdout:read_start(on_stdout_read)
         stderr:read_start(on_stderr_read)
     end
+end
+
+
+M.split_string_at_newline = function(input)
+    local lines = {}
+    for line in string.gmatch(input, "([^\n]*)\n?") do
+        table.insert(lines, line)
+    end
+    return lines
 end
 
 return M

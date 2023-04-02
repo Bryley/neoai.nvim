@@ -1,23 +1,91 @@
-
-local event = require("nui.utils.autocmd").event
-local Layout = require("nui.layout")
-local Popup = require("nui.popup")
-
 local ui = require("neoai.ui")
+local chat = require("neoai.chat")
 
 local M = {}
 
+local recieve_chunk = function(chunk)
+	-- response['choices'][0]['message']['content']
+	-- ui.appendToOutput("'" .. string.gsub(chunk, "^data: ", "") .. "'" .. '\n\n\n')
+
+	for line in chunk:gmatch("[^\n]+") do
+		local raw_json = string.gsub(line, "^data: ", "")
+
+		local ok, path = pcall(vim.json.decode, raw_json)
+		if not ok then
+            goto continue
+		end
+
+        path = path.choices
+        if path == nil then
+            goto continue
+        end
+        path = path[1]
+        if path == nil then
+            goto continue
+        end
+        path = path.delta
+        if path == nil then
+            goto continue
+        end
+        path = path.content
+        if path == nil then
+            goto continue
+        end
+        ui.appendToOutput(path)
+	    ::continue::
+	end
+
+	-- local path = parsed_data.choices
+	-- if path == nil then
+	-- 	ui.appendToOutput("1")
+	-- 	return
+	-- end
+	-- path = path[1]
+	-- if path == nil then
+	-- 	ui.appendToOutput("2")
+	-- 	return
+	-- end
+	-- path = path.delta
+	-- if path == nil then
+	-- 	ui.appendToOutput("3")
+	-- 	return
+	-- end
+	-- path = path.content
+	-- if path == nil then
+	-- 	ui.appendToOutput("4")
+	-- 	return
+	-- end
+	--
+	-- ui.appendToOutput("Below:\n")
+	-- ui.appendToOutput(path)
+end
+
+---@param prompt string
+local on_prompt_send = function(prompt)
+    ui.appendToOutput(prompt .. "\n")
+	chat.send_chat(prompt, recieve_chunk, function(err, out)
+		if err ~= nil then
+			vim.api.nvim_err_writeln("Recieved OpenAI error: " .. err)
+			return
+		end
+		ui.appendToOutput("\nDone")
+	end)
+end
 
 ---Toggles opening and closing split
 ---@param value boolean|nil The value to flip
 M.toggleSplit = function(value)
-	local open = value or (value == nil and ui.split == nil)-- split.winid == nil)
+	local open = value or (value == nil and ui.split == nil) -- split.winid == nil)
 	if open then
 		-- Open
-        ui.createUI()
+		ui.createUI(on_prompt_send)
+
+		-- ui.appendToOutput("Wow, it worked :O")
+		-- ui.appendToOutput("Now what?")
+		-- ui.appendToOutput("\nThis is very cool")
 	else
 		-- Close
-        ui.destroyUI()
+		ui.destroyUI()
 	end
 end
 
