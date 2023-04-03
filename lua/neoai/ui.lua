@@ -1,7 +1,7 @@
 local Layout = require("nui.layout")
 local Split = require("nui.split")
 local Popup = require("nui.popup")
-local utils = require("neoai.utils")
+local chat = require("neoai.chat")
 
 local M = {}
 
@@ -22,7 +22,7 @@ M.clear_input = function ()
     end
 end
 
-M.createUI = function(on_prompt_send)
+M.createUI = function()
 	M.split = Split({
 		relative = "editor",
 		position = "right",
@@ -99,7 +99,7 @@ M.createUI = function(on_prompt_send)
     M.submit_prompt = function ()
         local lines = vim.api.nvim_buf_get_lines(input_buffer, 0, -1, false)
         local prompt = table.concat(lines, '\n')
-        on_prompt_send(prompt)
+        chat.on_prompt_send(prompt)
         M.clear_input()
     end
 
@@ -119,35 +119,59 @@ M.destroyUI = function()
     end
 end
 
-
--- TODO NTS: Fix multiple newlines together eg '\n\n' doesn't work correctly
--- Also now want to do some colors for user and response also putting result in
+-- TODO NTS: Now want to do some colors for user and response also putting result in
 -- register
+-- Also alow for back and forth converstations and having a visual selection range as well
 
 ---Append text to the output, GPT should populate this
 ---@param txt string The text to append to the UI
-M.appendToOutput = function(txt)
-	local lines = utils.split_string_at_newline(txt)
+---@param type number 0/nil = normal, 1 = input
+M.appendToOutput = function(txt, type)
+	local lines = vim.split(txt, "\n", {})
+
+    local ns = vim.api.nvim_get_namespaces().neoai_output
+
+    if ns == nil then
+        ns = vim.api.nvim_create_namespace("neoai_output")
+    end
+
+    local hl = "Normal"
+    if type == 1 then
+        -- hl = "NeoAIInput"
+        hl = "ErrorMsg"
+    end
+
+    local length = #lines
+
+    if M.output_popup == nil then
+        vim.api.nvim_err_writeln("NeoAI window needs to be open")
+        return
+    end
+    local buffer = M.output_popup.bufnr
+    local win = M.output_popup.winid
 
 	for i, line in ipairs(lines) do
-		if M.output_popup == nil then
-			vim.api.nvim_err_writeln("NeoAI window needs to be open")
-			return
-		end
-		local buffer = M.output_popup.bufnr
 
-		local last_line_num = vim.api.nvim_buf_line_count(buffer)
+        local currentLine = vim.api.nvim_buf_get_lines(buffer, -2, -1, false)[1]
+        vim.api.nvim_buf_set_lines(buffer, -2, -1, false, {currentLine .. line})
 
-		local last_line = vim.api.nvim_buf_get_lines(buffer, last_line_num - 1, last_line_num, false)[1]
+		-- local last_line_num = vim.api.nvim_buf_line_count(buffer)
+		-- local last_line = vim.api.nvim_buf_get_lines(buffer, last_line_num - 1, last_line_num, false)[1]
+		-- local new_text = last_line .. line
 
-		local new_text = last_line .. line
 
-		vim.api.nvim_buf_set_lines(buffer, last_line_num - 1, last_line_num, false, { new_text })
-		if i < #lines - 1 then
+		-- vim.api.nvim_buf_set_lines(buffer, last_line_num - 1, last_line_num, false, { new_text })
+        local last_line_num = vim.api.nvim_buf_line_count(buffer)
+        -- vim.api.nvim_buf_add_highlight(buffer, ns, hl, last_line_num - 1, 0, -1)
+
+		if i < length then
 			-- Add new line
-			vim.api.nvim_buf_set_lines(buffer, last_line_num, last_line_num, false, { "" })
+			vim.api.nvim_buf_set_lines(buffer, -1, -1, false, { "" })
 		end
+        vim.api.nvim_win_set_cursor(win, {last_line_num, 0})
 	end
 end
 
 return M
+-- Rplace me
+

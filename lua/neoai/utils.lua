@@ -2,6 +2,11 @@
 
 local M = {}
 
+---@param output string
+M.save_to_register = function(output)
+    vim.fn.setreg("g", output)
+end
+
 ---Executes command getting stdout chunks
 ---@param cmd string
 ---@param args string[]
