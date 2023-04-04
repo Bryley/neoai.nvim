@@ -19,11 +19,13 @@ end
 
 ---Toggles opening and closing split
 ---@param value boolean|nil The value to flip
+---@return true if opened and false if closed
 M.toggle = function(value)
 	local open = value or (value == nil and ui.split == nil) -- split.winid == nil)
 	if open then
 		-- Open
 		ui.createUI()
+        return true
 
 		-- ui.appendToOutput("Wow, it worked :O")
 		-- ui.appendToOutput("Now what?")
@@ -31,6 +33,7 @@ M.toggle = function(value)
 	else
 		-- Close
 		ui.destroyUI()
+        return false
 	end
 end
 
