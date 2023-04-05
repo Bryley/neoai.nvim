@@ -4,11 +4,20 @@
 TODO LIST:
 
 - [X] Back and forth conversations
-- [ ] Context using visual mode
-- [ ] Context using buffer
+- [X] Context using visual mode
+- [X] Fix when using :q on NeoAI GUI
+- [ ] Shortcuts for:
+    - [ ] Replacing context with newly generated code
+    - [ ] Switching Model
+- [ ] Highlight context when inside NeoAI buffer
+- [ ] Use autocommand groups to make undo action a single thing when doing
+  inject mode.
+- [ ] Inject strip output for code or other.
+- [X] Context using buffer
 - [ ] Output in current buffer mode
 - [ ] Switching models
 - [ ] Colors!
-- [ ] Strip code from output and put in buffer
+- [X] Strip code from output and put in buffer
 - [ ] Add setup config
 - [ ] Clean code
+- [ ] Better way to focus on GUI window

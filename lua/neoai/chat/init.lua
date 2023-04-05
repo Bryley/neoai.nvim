@@ -1,10 +1,28 @@
 local utils = require("neoai.utils")
-local ChatHistory = require("neoai.chat.history")
 
 local M = {}
 
-M.chat_history = ChatHistory:new()
+---@type string
+M.context = nil
+
+---@type ChatHistory
+M.chat_history = nil
 local append_to_output = nil
+
+
+---@param buffer number
+---@param line1 number
+---@param line2 number
+M.set_context = function (buffer, line1, line2)
+    local context = table.concat(vim.api.nvim_buf_get_lines(buffer, line1 - 1, line2, false), "\n")
+    M.chat_history = nil
+    M.context = context
+end
+
+M.reset = function ()
+    M.context = nil
+    M.chat_history = nil
+end
 
 local chunks = {}
 
@@ -42,19 +60,25 @@ end
 
 ---@param prompt string
 ---@param append_to_output_func function
-M.on_prompt_send = function(prompt, append_to_output_func)
+---@param separators boolean True if separators should be included
+---@param registers function Called when completed
+M.on_prompt_send = function(prompt, append_to_output_func, separators, on_complete)
     append_to_output = append_to_output_func
-	append_to_output(prompt .. "\n--------\n", 1)
+    if separators then
+        append_to_output(prompt .. "\n--------\n", 1)
+    end
     chunks = {}
 	M.send_chat(prompt, recieve_chunk, function(err, _)
 		if err ~= nil then
 			vim.api.nvim_err_writeln("Recieved OpenAI error: " .. err)
 			return
 		end
-		append_to_output("\n--------\n", 1)
+        if separators then
+            append_to_output("\n--------\n", 1)
+        end
         local output = table.concat(chunks, "")
-        utils.save_to_register(output)
         M.chat_history:add_message(false, output)
+        on_complete(output)
 	end)
 end
 

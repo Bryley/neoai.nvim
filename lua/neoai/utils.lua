@@ -2,9 +2,22 @@
 
 local M = {}
 
+
+---@param text string
+---@return string
+M.extract_code_snippets = function (text)
+	local matches = {}
+	for match in string.gmatch(text, "```%w*\n(.-)```") do
+		table.insert(matches, match)
+	end
+	return table.concat(matches, "\n\n")
+end
+
+
 ---@param output string
-M.save_to_register = function(output)
+M.save_to_registers = function(output)
     vim.fn.setreg("g", output)
+    vim.fn.setreg("c", M.extract_code_snippets(output))
 end
 
 ---Executes command getting stdout chunks
@@ -57,13 +70,5 @@ function M.exec (cmd, args, on_stdout_chunk, on_complete)
     end
 end
 
-
-M.split_string_at_newline = function(input)
-    local lines = {}
-    for line in string.gmatch(input, "([^\n]*)\n?") do
-        table.insert(lines, line)
-    end
-    return lines
-end
 
 return M
