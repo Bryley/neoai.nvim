@@ -23,6 +23,25 @@ M.clear_input = function()
     end
 end
 
+
+M.is_focused = function ()
+    if M.input_popup == nil then
+        vim.api.nvim_err_writeln("NeoAI GUI needs to be opened")
+        return
+    end
+    local win = vim.api.nvim_get_current_win()
+    return win == M.output_popup.winid or win == M.input_popup.winid
+end
+
+
+M.focus = function ()
+    if M.input_popup == nil then
+        vim.api.nvim_err_writeln("NeoAI GUI needs to be opened")
+        return
+    end
+    vim.api.nvim_set_current_win(M.input_popup.winid)
+end
+
 M.create_ui = function()
     -- Destroy UI if already open
     if M.is_open() then
@@ -39,11 +58,14 @@ M.create_ui = function()
             text = {
                 top = " NeoAI ",
                 top_align = "center",
+                bottom = " Model: GPT 3.5 Turbo ",
+                bottom_align = "left",
             },
         },
         buf_options = {
             -- modifiable = true,
             -- readonly = false,
+            filetype = "markdown",
         },
         -- win_options = {
         -- 	winblend = 10,

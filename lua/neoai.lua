@@ -44,13 +44,40 @@ M.toggle_with_args = function (args)
     end
 end
 
-M.inject = function (args)
+
+M.focus_toggle = function (args)
+    local send_args = function ()
+        if args ~= "" then
+            ui.send_prompt(args)
+        end
+    end
+    if ui.is_open() then
+        if ui.is_focused() then
+            M.toggle(false)
+        else
+            ui.focus()
+            send_args()
+        end
+    else
+        M.toggle(true)
+        send_args()
+    end
+end
+
+M.inject = function (prompt, strip_function)
     chat.chat_history = ChatHistory:new()
 
-    local line = vim.api.nvim_win_get_cursor(0)[1]
+    strip_function = strip_function or function (x)
+        return x
+    end
+
+    local current_line = vim.api.nvim_win_get_cursor(0)[1]
     vim.api.nvim_create_augroup("NeoAIInjectGroup", {})
-    chat.on_prompt_send(args, function (txt, _)
-        inject.append_to_buffer(txt, line)
+    chat.on_prompt_send(prompt, function (txt, _)
+        local txt1 = strip_function(chat.get_current_output())
+        local txt2 = strip_function(table.concat({chat.get_current_output(), txt}, ""))
+
+        inject.append_to_buffer(string.sub(txt2, #txt1 + 1), current_line)
     end, false, function (output)
         inject.current_line = nil
         vim.api.nvim_out_write("Done generating AI response\n")

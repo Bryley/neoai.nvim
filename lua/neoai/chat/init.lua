@@ -26,6 +26,10 @@ end
 
 local chunks = {}
 
+M.get_current_output = function ()
+    return table.concat(chunks, "")
+end
+
 ---@param chunk string
 local recieve_chunk = function(chunk)
 	for line in chunk:gmatch("[^\n]+") do
@@ -61,11 +65,11 @@ end
 ---@param prompt string
 ---@param append_to_output_func function
 ---@param separators boolean True if separators should be included
----@param registers function Called when completed
+---@param on_complete function Called when completed
 M.on_prompt_send = function(prompt, append_to_output_func, separators, on_complete)
     append_to_output = append_to_output_func
     if separators then
-        append_to_output(prompt .. "\n--------\n", 1)
+        append_to_output(prompt .. "\n\n--------\n\n", 1)
     end
     chunks = {}
 	M.send_chat(prompt, recieve_chunk, function(err, _)
@@ -74,7 +78,7 @@ M.on_prompt_send = function(prompt, append_to_output_func, separators, on_comple
 			return
 		end
         if separators then
-            append_to_output("\n--------\n", 1)
+            append_to_output("\n\n--------\n\n", 1)
         end
         local output = table.concat(chunks, "")
         M.chat_history:add_message(false, output)
