@@ -1,15 +1,5 @@
 local chat = require("neoai.chat")
-
----Generates appropriate prompt using data, TODO make this function editable in
----the config
----@param msg string
----@return string
-local function gen_prompt(msg)
-    return
-        "Hi ChatGPT, I'd like to provide some context for future messages. " ..
-        "Here is the code/text that I want to refer to in our upcoming " ..
-        "conversations:\n\n" .. msg
-end
+local config = require("neoai.config")
 
 ---@class ChatHistory
 local ChatHistory = { messages = {} }
@@ -23,12 +13,12 @@ function ChatHistory:new()
     self.messages = {}
 
     if chat.context ~= nil then
-        self:add_message(true, gen_prompt(chat.context))
+        local prompt = config.options.prompts.context_prompt(chat.context)
+        self:add_message(true, prompt)
     end
     return obj
 end
 
----comment
 ---@param user boolean True if user sent msg
 ---@param msg string The message to add
 function ChatHistory:add_message(user, msg)

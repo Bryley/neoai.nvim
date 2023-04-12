@@ -1,4 +1,5 @@
 local utils = require("neoai.utils")
+local config = require("neoai.config")
 
 local M = {}
 
@@ -86,11 +87,11 @@ M.on_prompt_send = function(prompt, append_to_output_func, separators, on_comple
 	end)
 end
 
---@param prompt string
---@param on_stdout_chunk fun(chunk: string)
---@param on_complete(err?: string, output?: string):nil
+---@param prompt string
+---@param on_stdout_chunk fun(chunk: string)
+---@param on_complete fun(err?: string, output?: string):nil
 M.send_chat = function(prompt, on_stdout_chunk, on_complete)
-	local api_key = os.getenv("OPENAI_API_KEY")
+	local api_key = os.getenv(config.options.open_api_key_env)
 
     M.chat_history:add_message(true, prompt)
 

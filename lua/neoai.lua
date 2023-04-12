@@ -2,6 +2,7 @@ local ui = require("neoai.ui")
 local chat = require("neoai.chat")
 local inject = require("neoai.inject")
 local ChatHistory = require("neoai.chat.history")
+local config = require("neoai.config")
 
 local M = {}
 
@@ -16,8 +17,11 @@ local function setup_colors()
 	)
 end
 
-M.setup = function()
-	setup_colors()
+---Setup NeoAI
+---@param options Options | nil
+M.setup = function(options)
+	-- setup_colors()
+    config.setup(options)
 end
 
 ---Toggles opening and closing split

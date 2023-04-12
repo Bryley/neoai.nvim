@@ -6,6 +6,7 @@ TODO LIST:
 - [X] Back and forth conversations
 - [X] Context using visual mode
 - [X] Fix when using :q on NeoAI GUI
+- [ ] Config
 - [ ] Shortcuts for:
     - [ ] Replacing context with newly generated code
     - [ ] Switching Model

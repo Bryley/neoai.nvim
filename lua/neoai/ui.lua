@@ -4,6 +4,7 @@ local Popup = require("nui.popup")
 local chat = require("neoai.chat")
 local ChatHistory = require("neoai.chat.history")
 local utils = require("neoai.utils")
+local config = require("neoai.config")
 
 local M = {}
 
@@ -13,201 +14,196 @@ M.input_popup = nil
 M.layout = nil
 
 ---@param prompt string
-M.submit_prompt = function(prompt)
-end
+M.submit_prompt = function(prompt) end
 
 M.clear_input = function()
-    if M.input_popup ~= nil then
-        local buffer = M.input_popup.bufnr
-        vim.api.nvim_buf_set_lines(buffer, 0, -1, false, {})
-    end
+	if M.input_popup ~= nil then
+		local buffer = M.input_popup.bufnr
+		vim.api.nvim_buf_set_lines(buffer, 0, -1, false, {})
+	end
 end
 
-
-M.is_focused = function ()
-    if M.input_popup == nil then
-        vim.api.nvim_err_writeln("NeoAI GUI needs to be opened")
-        return
-    end
-    local win = vim.api.nvim_get_current_win()
-    return win == M.output_popup.winid or win == M.input_popup.winid
+M.is_focused = function()
+	if M.input_popup == nil then
+		vim.api.nvim_err_writeln("NeoAI GUI needs to be opened")
+		return
+	end
+	local win = vim.api.nvim_get_current_win()
+	return win == M.output_popup.winid or win == M.input_popup.winid
 end
 
-
-M.focus = function ()
-    if M.input_popup == nil then
-        vim.api.nvim_err_writeln("NeoAI GUI needs to be opened")
-        return
-    end
-    vim.api.nvim_set_current_win(M.input_popup.winid)
+M.focus = function()
+	if M.input_popup == nil then
+		vim.api.nvim_err_writeln("NeoAI GUI needs to be opened")
+		return
+	end
+	vim.api.nvim_set_current_win(M.input_popup.winid)
 end
 
 M.create_ui = function()
-    -- Destroy UI if already open
-    if M.is_open() then
-        return
-    end
+	-- Destroy UI if already open
+	if M.is_open() then
+		return
+	end
 
-    M.output_popup = Popup({
-        enter = false,
-        focusable = true,
-        zindex = 50,
-        position = "50%",
-        border = {
-            style = "rounded",
-            text = {
-                top = " NeoAI ",
-                top_align = "center",
-                bottom = " Model: GPT 3.5 Turbo ",
-                bottom_align = "left",
-            },
-        },
-        buf_options = {
-            -- modifiable = true,
-            -- readonly = false,
-            filetype = "markdown",
-        },
-        -- win_options = {
-        -- 	winblend = 10,
-        -- 	winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
-        -- },
-        win_options = {
-            wrap = true,
-        },
-    })
+	M.output_popup = Popup({
+		enter = false,
+		focusable = true,
+		zindex = 50,
+		position = "50%",
+		border = {
+			style = "rounded",
+			text = {
+				top = " " .. config.options.ui.output_popup_text .. " ",
+				top_align = "center",
+				bottom = " Model: GPT 3.5 Turbo ",
+				bottom_align = "left",
+			},
+		},
+		buf_options = {
+			-- modifiable = true,
+			-- readonly = false,
+			filetype = "markdown",
+		},
+		-- win_options = {
+		-- 	winblend = 10,
+		-- 	winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
+		-- },
+		win_options = {
+			wrap = true,
+		},
+	})
 
-    M.input_popup = Popup({
-        enter = true,
-        focusable = true,
-        zindex = 50,
-        position = "50%",
-        border = {
-            style = "rounded",
-            padding = {
-                left = 1,
-                right = 1,
-            },
-            text = {
-                top = " Prompt ",
-                top_align = "center",
-            },
-        },
-        buf_options = {
-            modifiable = true,
-            readonly = false,
-        },
-        win_options = {
-            winblend = 10,
-            winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
-            wrap = true,
-        },
-    })
+	M.input_popup = Popup({
+		enter = true,
+		focusable = true,
+		zindex = 50,
+		position = "50%",
+		border = {
+			style = "rounded",
+			padding = {
+				left = 1,
+				right = 1,
+			},
+			text = {
+				top = " " .. config.options.ui.input_popup_text .. " ",
+				top_align = "center",
+			},
+		},
+		buf_options = {
+			modifiable = true,
+			readonly = false,
+		},
+		win_options = {
+			winblend = 10,
+			winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
+			wrap = true,
+		},
+	})
 
-    M.layout = Layout(
-        {
-            relative = "editor",
-            position = {
-                row = "0%",
-                col = "100%",
-            },
-            size = {
-                width = "20%",
-                height = "100%",
-            },
-        },
-        Layout.Box({
-            Layout.Box(M.output_popup, { size = "80%" }),
-            Layout.Box(M.input_popup, { size = "20%" }),
-        }, { dir = "col" })
-    )
-    M.layout:mount()
+	local output_height = config.options.ui.output_popup_height
 
-    chat.chat_history = ChatHistory:new()
+	M.layout = Layout(
+		{
+			relative = "editor",
+			position = {
+				row = "0%",
+				col = "100%",
+			},
+			size = {
+				width = config.options.ui.width .. "%",
+				height = "100%",
+			},
+		},
+		Layout.Box({
+			Layout.Box(M.output_popup, { size = output_height .. "%" }),
+			Layout.Box(M.input_popup, { size = (100 - output_height) .. "%" }),
+		}, { dir = "col" })
+	)
+	M.layout:mount()
 
-    local input_buffer = M.input_popup.bufnr
+	chat.chat_history = ChatHistory:new()
 
-    M.submit_prompt = function()
-        local lines = vim.api.nvim_buf_get_lines(input_buffer, 0, -1, false)
-        local prompt = table.concat(lines, "\n")
-        M.send_prompt(prompt)
-        M.clear_input()
-    end
+	local input_buffer = M.input_popup.bufnr
 
-    local opts = { noremap = true, silent = true }
-    vim.api.nvim_buf_set_keymap(input_buffer, "i", "<C-Enter>", "<Enter>", opts)
-    vim.api.nvim_buf_set_keymap(input_buffer, "i", "<Enter>", "<cmd>lua require('neoai.ui').submit_prompt()<cr>", opts)
+	M.submit_prompt = function()
+		local lines = vim.api.nvim_buf_get_lines(input_buffer, 0, -1, false)
+		local prompt = table.concat(lines, "\n")
+		M.send_prompt(prompt)
+		M.clear_input()
+	end
+
+	local opts = { noremap = true, silent = true }
+	vim.api.nvim_buf_set_keymap(input_buffer, "i", "<C-Enter>", "<Enter>", opts)
+	vim.api.nvim_buf_set_keymap(input_buffer, "i", "<Enter>", "<cmd>lua require('neoai.ui').submit_prompt()<cr>", opts)
 end
 
-M.send_prompt = function (prompt)
-    chat.on_prompt_send(prompt, M.append_to_output, true, function (output)
-        utils.save_to_registers(output)
-    end)
+M.send_prompt = function(prompt)
+	chat.on_prompt_send(prompt, M.append_to_output, true, function(output)
+		utils.save_to_registers(output)
+	end)
 end
 
 M.destroy_ui = function()
-    if M.layout ~= nil then
-        M.layout:unmount()
-    end
-    M.layout = nil
-    M.submit_prompt = function()
-        -- Empty function
-    end
-    chat.reset()
+	if M.layout ~= nil then
+		M.layout:unmount()
+	end
+	M.layout = nil
+	M.submit_prompt = function()
+		-- Empty function
+	end
+	chat.reset()
 end
 
 M.is_open = function()
-    return M.layout ~= nil
+	return M.layout ~= nil
 end
-
--- TODO NTS: Now want to do some colors for user and response also putting result in
--- register
--- Also alow for back and forth converstations and having a visual selection range as well
 
 ---Append text to the output, GPT should populate this
 ---@param txt string The text to append to the UI
 ---@param type number 0/nil = normal, 1 = input
 M.append_to_output = function(txt, type)
-    local lines = vim.split(txt, "\n", {})
+	local lines = vim.split(txt, "\n", {})
 
-    local ns = vim.api.nvim_get_namespaces().neoai_output
+	local ns = vim.api.nvim_get_namespaces().neoai_output
 
-    if ns == nil then
-        ns = vim.api.nvim_create_namespace("neoai_output")
-    end
+	if ns == nil then
+		ns = vim.api.nvim_create_namespace("neoai_output")
+	end
 
-    local hl = "Normal"
-    if type == 1 then
-        -- hl = "NeoAIInput"
-        hl = "ErrorMsg"
-    end
+	local hl = "Normal"
+	if type == 1 then
+		-- hl = "NeoAIInput"
+		hl = "ErrorMsg"
+	end
 
-    local length = #lines
+	local length = #lines
 
-    if M.output_popup == nil then
-        vim.api.nvim_err_writeln("NeoAI window needs to be open")
-        return
-    end
-    local buffer = M.output_popup.bufnr
-    local win = M.output_popup.winid
+	if M.output_popup == nil then
+		vim.api.nvim_err_writeln("NeoAI window needs to be open")
+		return
+	end
+	local buffer = M.output_popup.bufnr
+	local win = M.output_popup.winid
 
-    for i, line in ipairs(lines) do
-        local currentLine = vim.api.nvim_buf_get_lines(buffer, -2, -1, false)[1]
-        vim.api.nvim_buf_set_lines(buffer, -2, -1, false, { currentLine .. line })
+	for i, line in ipairs(lines) do
+		local currentLine = vim.api.nvim_buf_get_lines(buffer, -2, -1, false)[1]
+		vim.api.nvim_buf_set_lines(buffer, -2, -1, false, { currentLine .. line })
 
-        -- local last_line_num = vim.api.nvim_buf_line_count(buffer)
-        -- local last_line = vim.api.nvim_buf_get_lines(buffer, last_line_num - 1, last_line_num, false)[1]
-        -- local new_text = last_line .. line
+		-- local last_line_num = vim.api.nvim_buf_line_count(buffer)
+		-- local last_line = vim.api.nvim_buf_get_lines(buffer, last_line_num - 1, last_line_num, false)[1]
+		-- local new_text = last_line .. line
 
-        -- vim.api.nvim_buf_set_lines(buffer, last_line_num - 1, last_line_num, false, { new_text })
-        local last_line_num = vim.api.nvim_buf_line_count(buffer)
-        -- vim.api.nvim_buf_add_highlight(buffer, ns, hl, last_line_num - 1, 0, -1)
+		-- vim.api.nvim_buf_set_lines(buffer, last_line_num - 1, last_line_num, false, { new_text })
+		local last_line_num = vim.api.nvim_buf_line_count(buffer)
+		-- vim.api.nvim_buf_add_highlight(buffer, ns, hl, last_line_num - 1, 0, -1)
 
-        if i < length then
-            -- Add new line
-            vim.api.nvim_buf_set_lines(buffer, -1, -1, false, { "" })
-        end
-        vim.api.nvim_win_set_cursor(win, { last_line_num, 0 })
-    end
+		if i < length then
+			-- Add new line
+			vim.api.nvim_buf_set_lines(buffer, -1, -1, false, { "" })
+		end
+		vim.api.nvim_win_set_cursor(win, { last_line_num, 0 })
+	end
 end
 
 return M
