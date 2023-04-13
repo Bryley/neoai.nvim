@@ -96,7 +96,7 @@ M.send_chat = function(prompt, on_stdout_chunk, on_complete)
     M.chat_history:add_message(true, prompt)
 
 	local data = {
-		model = "gpt-3.5-turbo",
+        model = config.options.model,
 		stream = true,
         messages = M.chat_history.messages
 		-- messages = {

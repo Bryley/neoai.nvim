@@ -56,7 +56,7 @@ M.create_ui = function()
 			text = {
 				top = " " .. config.options.ui.output_popup_text .. " ",
 				top_align = "center",
-				bottom = " Model: GPT 3.5 Turbo ",
+				bottom = " Model: " .. config.options.model .. " ",
 				bottom_align = "left",
 			},
 		},
