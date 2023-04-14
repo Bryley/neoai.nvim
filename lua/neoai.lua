@@ -63,7 +63,7 @@ end
 ---@param prompt string The prompt to inject, to inject no prompt just do empty string
 M.smart_toggle = function(prompt)
     local send_args = function()
-        if not utils.is_empty(prompt) ~= "" then
+        if not utils.is_empty(prompt) then
             ui.send_prompt(prompt)
         end
     end
