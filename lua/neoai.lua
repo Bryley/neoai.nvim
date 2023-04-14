@@ -4,6 +4,7 @@ local inject = require("neoai.inject")
 local ChatHistory = require("neoai.chat.history")
 local config = require("neoai.config")
 local shortcuts = require("neoai.shortcuts")
+local utils = require("neoai.utils")
 
 local M = {}
 
