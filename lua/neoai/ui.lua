@@ -3,6 +3,7 @@ local Popup = require("nui.popup")
 local chat = require("neoai.chat")
 local utils = require("neoai.utils")
 local config = require("neoai.config")
+local event = require("nui.utils.autocmd").event
 
 local M = {}
 
@@ -23,7 +24,7 @@ end
 
 M.is_focused = function()
 	if M.input_popup == nil then
-		vim.api.nvim_err_writeln("NeoAI GUI needs to be opened")
+		vim.notify("NeoAI GUI needs to be open", vim.log.levels.ERROR)
 		return
 	end
 	local win = vim.api.nvim_get_current_win()
@@ -32,7 +33,7 @@ end
 
 M.focus = function()
 	if M.input_popup == nil then
-		vim.api.nvim_err_writeln("NeoAI GUI needs to be opened")
+		vim.notify("NeoAI GUI needs to be open", vim.log.levels.ERROR)
 		return
 	end
 	vim.api.nvim_set_current_win(M.input_popup.winid)
@@ -122,6 +123,13 @@ M.create_ui = function()
 	)
 	M.layout:mount()
 
+    M.output_popup:on({ event.BufDelete, event.WinClosed }, function ()
+        M.destroy_ui()
+    end)
+    M.input_popup:on({ event.BufDelete, event.WinClosed }, function ()
+        M.destroy_ui()
+    end)
+
     chat.new_chat_history()
 
 	local input_buffer = M.input_popup.bufnr
@@ -180,7 +188,7 @@ M.append_to_output = function(txt, type)
 	local length = #lines
 
 	if M.output_popup == nil then
-		vim.api.nvim_err_writeln("NeoAI window needs to be open")
+		vim.notify("NeoAI window needs to be open", vim.log.levels.ERROR)
 		return
 	end
 	local buffer = M.output_popup.bufnr

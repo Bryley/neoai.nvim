@@ -53,8 +53,8 @@ end
 ---@param line2 number
 M.set_context = function(buffer, line1, line2)
     local context = table.concat(vim.api.nvim_buf_get_lines(buffer, line1 - 1, line2, false), "\n")
-    M.chat_history = nil
     M.context = context
+    M.new_chat_history()
 end
 
 M.reset = function()
