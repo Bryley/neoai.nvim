@@ -42,7 +42,7 @@ end
 ---@param prompt string | nil If set then this prompt will be sent to the GUI if toggling on
 ---@return boolean true if opened and false if closed
 M.toggle = function(toggle, prompt)
-	local open = (toggle ~= "" and toggle) or (toggle == "" and not ui.is_open())
+    local open = (toggle ~= "" and toggle) or (toggle == "" and not ui.is_open())
     if open then
         -- Open
         ui.create_ui()
