@@ -1,8 +1,6 @@
 local Layout = require("nui.layout")
--- local Split = require("nui.split")
 local Popup = require("nui.popup")
 local chat = require("neoai.chat")
-local ChatHistory = require("neoai.chat.history")
 local utils = require("neoai.utils")
 local config = require("neoai.config")
 
@@ -46,6 +44,8 @@ M.create_ui = function()
 		return
 	end
 
+    local current_model = chat.get_current_model()
+
 	M.output_popup = Popup({
 		enter = false,
 		focusable = true,
@@ -56,7 +56,7 @@ M.create_ui = function()
 			text = {
 				top = " " .. config.options.ui.output_popup_text .. " ",
 				top_align = "center",
-				bottom = " Model: " .. config.options.model .. " ",
+				bottom = " Model: " .. current_model.model .. " (" .. current_model.name.name .. ") ",
 				bottom_align = "left",
 			},
 		},
@@ -122,7 +122,7 @@ M.create_ui = function()
 	)
 	M.layout:mount()
 
-	chat.chat_history = ChatHistory:new()
+    chat.new_chat_history()
 
 	local input_buffer = M.input_popup.bufnr
 
@@ -139,7 +139,7 @@ M.create_ui = function()
 end
 
 M.send_prompt = function(prompt)
-	chat.on_prompt_send(prompt, M.append_to_output, true, function(output)
+	chat.send_prompt(prompt, M.append_to_output, true, function(output)
 		utils.save_to_registers(output)
 	end)
 end
@@ -161,7 +161,7 @@ end
 
 ---Append text to the output, GPT should populate this
 ---@param txt string The text to append to the UI
----@param type number 0/nil = normal, 1 = input
+---@param type integer 0/nil = normal, 1 = input
 M.append_to_output = function(txt, type)
 	local lines = vim.split(txt, "\n", {})
 

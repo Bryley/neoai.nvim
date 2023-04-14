@@ -4,10 +4,13 @@ your editor. It helps you generate code, rewrite text, and even get suggestions
 in-context with your code. The plugin is built with a user-friendly interface,
 making it easy to interact with the AI and get the assistance you need.
 
+**Note:** This plugin is in early it's early changes and is subject to change.
+
 ## Installation
 To install NeoAI, you can use your favorite plugin manager. For example,
 with vim-plug, add the following line to your `init.vim` or `.vimrc`, note that
-it also requires the [nui](https://github.com/MunifTanjim/nui.nvim) dependency:
+it also requires the [nui](https://github.com/MunifTanjim/nui.nvim) dependency
+and curl installed on the system:
 
 ```
 Plug 'MunifTanjim/nui.nvim'
@@ -129,7 +132,8 @@ monitored through [this link](https://platform.openai.com/account/usage)
 
 
 ## Setup
-To set up the plugin, add the following to your `init.vim` or `.vimrc`:
+To set up the plugin, add the following to your `init.vim` or `.vimrc` (or put
+under the `config` option if using lazy.nvim:
 
 ```lua
 lua << EOF
@@ -141,7 +145,12 @@ require('neoai').setup{
         width = 30,      -- As percentage eg. 30%
         output_popup_height = 80, -- As percentage eg. 80%
     },
-    model = "gpt-3.5-turbo",
+    models = {
+        {
+            name = "openai",
+            model = "gpt-3.5-turbo"
+        },
+    },
     register_output = {
         ["g"] = function(output)
             return output
@@ -153,7 +162,7 @@ require('neoai').setup{
     },
     prompts = {
         context_prompt = function(context)
-            return "Hi ChatGPT, I'd like to provide some context for future "
+            return "Hey, I'd like to provide some context for future "
                 .. "messages. Here is the code/text that I want to refer "
                 .. "to in our upcoming conversations:\n\n"
                 .. context
@@ -200,8 +209,10 @@ available options are as follows:
  - `width`: Width of the window as a percentage (e.g., 30 = 30%, default: 30).
  - `output_popup_height`: Height of the output popup as a percentage (e.g., 80 = 80%, default: 80).
 
-### Model
- - `model`: The OpenAI Chat Model to use.
+### Model Options
+ - `models`: A list of models to use:
+    - `name`: The name of the model provider (eg. "openai")
+    - `model`: Either a string of the model name to use or a list of model names
 
 ### Register Output
  - `register_output`: A table with a register as the key and a function that takes the raw output from the AI and outputs what you want to save into that register. Example:
@@ -298,10 +309,15 @@ visually selected text or the entire buffer if no selection is made.
 
 ## Roadmap:
 
+- [Issue 1](https://github.com/Bryley/neoai.nvim/issues/1)
+    - [ ] Add description option for shortcuts
+    - [ ] Have ability to have shortcuts be run via user command instead
+- [ ] Tests
 - [ ] Switching Models
 - [ ] Better Colours (eg. highlighting user input)
 - [ ] Highlight context when inside NeoAIContext buffer or make context clear
 - [ ] Keymap for replacing context with newly generated code
+- [ ] Better error detection
 - [X] Back and forth conversations
 - [X] Context using visual mode
 - [X] Fix when using :q on NeoAI GUI

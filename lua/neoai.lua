@@ -33,6 +33,7 @@ end
 ---@param options Options | nil The options for the plugin
 M.setup = function(options)
     config.setup(options)
+    chat.setup_models()
     shortcuts.setup_shortcuts()
 end
 
@@ -104,15 +105,14 @@ end
 ---@param strip_function (fun(output: string): string) | nil A function that strips the output
 ---@param start_line integer | nil The line to start injecting onto (After inserting 2 newlines), nil = current selected line
 M.inject = function(prompt, strip_function, start_line)
-    chat.chat_history = ChatHistory:new()
+    chat.new_chat_history()
 
     strip_function = strip_function or function(x)
         return x
     end
 
     local current_line = start_line or vim.api.nvim_win_get_cursor(0)[1]
-    vim.api.nvim_create_augroup("NeoAIInjectGroup", {})
-    chat.on_prompt_send(
+    chat.send_prompt(
         prompt,
         function(txt, _)
             -- Get differences between text
@@ -124,8 +124,7 @@ M.inject = function(prompt, strip_function, start_line)
         false,
         function(_)
             inject.current_line = nil
-            vim.api.nvim_out_write("Done generating AI response\n")
-            vim.api.nvim_del_augroup_by_name("NeoAIInjectGroup")
+            vim.notify("NeoAI: Done generating AI response", vim.log.levels.INFO)
         end
     )
 end

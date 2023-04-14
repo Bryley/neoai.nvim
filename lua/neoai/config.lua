@@ -10,7 +10,12 @@ M.get_defaults = function()
             width = 30,      -- As percentage eg. 30%
             output_popup_height = 80, -- As percentage eg. 80%
         },
-		model = "gpt-3.5-turbo",
+        models = {
+            {
+                name = "openai",
+                model = "gpt-3.5-turbo"
+            },
+        },
         register_output = {
             ["g"] = function(output)
                 return output
@@ -22,7 +27,7 @@ M.get_defaults = function()
         },
         prompts = {
             context_prompt = function(context)
-                return "Hi ChatGPT, I'd like to provide some context for future "
+                return "Hey, I'd like to provide some context for future "
                     .. "messages. Here is the code/text that I want to refer "
                     .. "to in our upcoming conversations (TEXT/CODE ONLY):\n\n"
                     .. context
@@ -64,6 +69,10 @@ end
 ---@field width integer The width of the window as a percentage number 30 = 30%
 ---@field output_popup_height integer The height of the output popup as a percentage
 
+---@class Model_Options
+---@field name "openai" The name of the model provider
+---@field model string | string[] The name of the model to use or list of model names to use
+
 ---@class Inject_Options
 ---@field cutoff_width integer | nil When injecting if the text becomes longer than this then it should go to a new line, if nil then ignore
 
@@ -79,7 +88,8 @@ end
 
 ---@class Options
 ---@field ui UI_Options UI configurations
----@field model string The OpenAI model to use by default
+---@field model string The OpenAI model to use by default @depricated
+---@field models Model_Options[] A list of different model options to use. First element will be default
 ---@field register_output table<string, fun(output: string): string> A table with a register as the key and a function that takes the raw output from the AI and outputs what you want to save into that register
 ---@field inject Inject_Options The inject options
 ---@field prompts Prompt_Options The custom prompt options
