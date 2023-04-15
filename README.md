@@ -313,11 +313,15 @@ visually selected text or the entire buffer if no selection is made.
     - [ ] Add description option for shortcuts
     - [ ] Have ability to have shortcuts be run via user command instead
 - [ ] Tests
+- [ ] Multiple chat sessions
 - [ ] Switching Models
 - [ ] Better Colours (eg. highlighting user input)
 - [ ] Highlight context when inside NeoAIContext buffer or make context clear
 - [ ] Keymap for replacing context with newly generated code
-- [ ] Better error detection
+- [ ] Support for:
+    - [ ] Amazon CodeWhisperer
+    - [ ] Github Copilot
+- [X] Better error detection
 - [X] Back and forth conversations
 - [X] Context using visual mode
 - [X] Fix when using :q on NeoAI GUI
