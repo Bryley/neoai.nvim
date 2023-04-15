@@ -3,7 +3,7 @@ local config = require("neoai.config")
 ---@class ChatHistory
 ---@field model string The name of the model
 ---@field messages { role: "user" | "assistant", content: string }[] The message history
-local ChatHistory = { model = "", prompt = {}, messages = {} }
+local ChatHistory = { model = "", messages = {} }
 
 ---Create new chat history object
 ---@param model string The model to use
@@ -19,18 +19,19 @@ function ChatHistory:new(model, context)
     self.messages = {}
 
     if context ~= nil then
-        local prompt = config.options.prompts.context_prompt(context)
-        self:set_prompt(prompt)
+        local context_prompt = config.options.prompts.context_prompt(context)
+        self:set_prompt(context_prompt)
     end
     return obj
 end
 
 --- @param prompt string system prompt
 function ChatHistory:set_prompt(prompt)
-    self.prompt = {
+    local system_msg = {
         role = "system",
         content = prompt,
     }
+    table.insert(self.messages, system_msg)
 end
 
 ---@param user boolean True if user sent msg
@@ -42,13 +43,6 @@ function ChatHistory:add_message(user, msg)
         role = role,
         content = msg,
     })
-end
-
-function ChatHistory:get_openai_message()
-    --- merge prompt and messages and get a new table
-    local message_copy = vim.deepcopy(self.messages)
-    vim.list_extend(message_copy, self.prompt)
-    return message_copy
 end
 
 return ChatHistory

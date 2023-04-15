@@ -56,11 +56,10 @@ M.send_to_model = function(chat_history, on_stdout_chunk, on_complete)
     local data = {
         model = chat_history.model,
         stream = true,
-        messages = chat_history:get_openai_message()
+        messages = chat_history.messages
     }
     chunks = {}
     raw_chunks = {}
-    vim.notify("Sending to OpenAI" .. vim.json.encode(data), vim.log.levels.INFO)
     utils.exec("curl", {
         "--silent", "--show-error", "--no-buffer",
         "https://api.openai.com/v1/chat/completions",
