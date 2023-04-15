@@ -4,6 +4,7 @@ local inject = require("neoai.inject")
 local ChatHistory = require("neoai.chat.history")
 local config = require("neoai.config")
 local shortcuts = require("neoai.shortcuts")
+local utils = require("neoai.utils")
 
 local M = {}
 
@@ -42,7 +43,7 @@ end
 ---@param prompt string | nil If set then this prompt will be sent to the GUI if toggling on
 ---@return boolean true if opened and false if closed
 M.toggle = function(toggle, prompt)
-    local open = toggle or (toggle == nil and not ui.is_open())
+    local open = (toggle ~= "" and toggle) or (toggle == "" and not ui.is_open())
     if open then
         -- Open
         ui.create_ui()
@@ -62,7 +63,7 @@ end
 ---@param prompt string The prompt to inject, to inject no prompt just do empty string
 M.smart_toggle = function(prompt)
     local send_args = function()
-        if prompt ~= "" then
+        if not utils.is_empty(prompt) then
             ui.send_prompt(prompt)
         end
     end
