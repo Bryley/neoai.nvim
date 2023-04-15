@@ -76,4 +76,8 @@ function M.exec(cmd, args, on_stdout_chunk, on_complete)
 	end
 end
 
+M.is_empty = function(s)
+	return s == nil or s == ""
+end
+
 return M
