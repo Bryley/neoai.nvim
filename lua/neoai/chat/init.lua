@@ -74,7 +74,9 @@ end
 ---@param separators boolean True if separators should be included
 ---@param on_complete fun(output: string) Called when completed
 M.send_prompt = function(prompt, append_to_output_func, separators, on_complete)
-    append_to_output = append_to_output_func
+    append_to_output = function (txt, type)
+        local ok, _ = pcall(append_to_output_func, txt, type)
+    end
     if separators then
         append_to_output(prompt .. "\n\n--------\n\n", 1)
     end
