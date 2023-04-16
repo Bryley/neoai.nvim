@@ -51,6 +51,16 @@ return {
 }
 ```
 
+For packer:
+
+```lua
+use ({
+  "Bryley/neoai.nvim",
+  require = { "MunifTanjim/nui.nvim"},
+  })
+
+
+```
 
 ## Showcase and Usage
 
