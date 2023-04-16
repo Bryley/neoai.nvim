@@ -14,7 +14,7 @@ end
 
 ---@param chunk string
 ---@param on_stdout_chunk fun(chunk: string) Function to call whenever a stdout chunk occurs
-local recieve_chunk = function(chunk, on_stdout_chunk)
+M._recieve_chunk = function(chunk, on_stdout_chunk)
     for line in chunk:gmatch("[^\n]+") do
         local raw_json = string.gsub(line, "^data: ", "")
 
@@ -61,8 +61,7 @@ M.send_to_model = function (chat_history, on_stdout_chunk, on_complete)
     chunks = {}
     raw_chunks = {}
 	utils.exec("curl", {
-        "--silent", "--show-error", "--no-buffer",
-		"https://api.openai.com/v1/chat/completions",
+        "--silent", "--show-error", "--no-buffer", "https://api.openai.com/v1/chat/completions",
 		"-H",
 		"Content-Type: application/json",
 		"-H",
@@ -70,7 +69,7 @@ M.send_to_model = function (chat_history, on_stdout_chunk, on_complete)
 		"-d",
 		vim.json.encode(data),
 	}, function (chunk)
-        recieve_chunk(chunk, on_stdout_chunk)
+        M._recieve_chunk(chunk, on_stdout_chunk)
 	end, function (err, _)
         local total_message = table.concat(raw_chunks, "")
         local ok, json = pcall(vim.json.decode, total_message)
