@@ -71,3 +71,23 @@ end, {
 	range = "%",
 	nargs = "+",
 })
+
+vim.api.nvim_create_user_command("NeoAIShortcut", function (opts)
+    local mode
+    if opts.range == 0 then
+        mode = "n"
+    else
+        mode = "v"
+    end
+    local shortcut_name = opts.fargs[1]
+    local func = require("neoai.shortcuts").shortcut_functions[shortcut_name .. mode]
+    if func == nil then
+        vim.notify("Shortcut '" .. shortcut_name .. "' doesn't support '" .. mode .. "' mode", vim.log.levels.ERROR)
+        return
+    end
+    func()
+end, {
+    nargs = 1,
+    range = true,
+    complete = require("neoai.shortcuts").complete_shortcut
+})

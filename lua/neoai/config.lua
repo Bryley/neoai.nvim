@@ -7,7 +7,7 @@ M.get_defaults = function()
         ui = {
             output_popup_text = "NeoAI",
             input_popup_text = "Prompt",
-            width = 30,      -- As percentage eg. 30%
+            width = 30,               -- As percentage eg. 30%
             output_popup_height = 80, -- As percentage eg. 80%
         },
         models = {
@@ -36,7 +36,9 @@ M.get_defaults = function()
         open_api_key_env = "OPENAI_API_KEY",
         shortcuts = {
             {
+                name = "textify",
                 key = "<leader>as",
+                desc = "fix text with AI",
                 use_context = true,
                 prompt = [[
                     Please rewrite the text to make it more readable, clear,
@@ -47,9 +49,11 @@ M.get_defaults = function()
                 strip_function = nil,
             },
             {
+                name = "gitcommit",
                 key = "<leader>ag",
+                desc = "generate git commit message",
                 use_context = false,
-                prompt = function ()
+                prompt = function()
                     return [[
                         Using the following git diff generate a consise and
                         clear git commit message, with a short title summary
@@ -80,7 +84,9 @@ end
 ---@field context_prompt fun(context: string) string Prompt to generate the prompt that should be used when using Context modes
 
 ---@class Shortcut
----@field key string The key bind value to listen for
+---@field name string The name of the shortcut, can trigger using :NeoAIShortcut <name>
+---@field key string | nil The key bind value to listen for or nil if none
+---@field desc string | nil The description of the shortcut
 ---@field use_context boolean If the context from the selection/buffer should be used
 ---@field prompt string|fun(): string The prompt to send or a function to generate the prompt to send
 ---@field modes ("n" | "v")[] A list of modes to set the keybind up for "n" for normal, "v" for visual
