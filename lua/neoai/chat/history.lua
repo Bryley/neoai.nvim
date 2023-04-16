@@ -19,10 +19,19 @@ function ChatHistory:new(model, context)
     self.messages = {}
 
     if context ~= nil then
-        local prompt = config.options.prompts.context_prompt(context)
-        self:add_message(true, prompt)
+        local context_prompt = config.options.prompts.context_prompt(context)
+        self:set_prompt(context_prompt)
     end
     return obj
+end
+
+--- @param prompt string system prompt
+function ChatHistory:set_prompt(prompt)
+    local system_msg = {
+        role = "system",
+        content = prompt,
+    }
+    table.insert(self.messages, system_msg)
 end
 
 ---@param user boolean True if user sent msg
