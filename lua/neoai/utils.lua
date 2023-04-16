@@ -51,7 +51,7 @@ function M.exec(cmd, args, on_stdout_chunk, on_complete)
 
 	local handle
 
-	handle, error = vim.loop.spawn(cmd, {
+	handle, err = vim.loop.spawn(cmd, {
 		args = args,
 		stdio = { nil, stdout, stderr },
 	}, function(code)
@@ -69,7 +69,7 @@ function M.exec(cmd, args, on_stdout_chunk, on_complete)
 	end)
 
 	if not handle then
-		on_complete(cmd .. " could not be started: " .. error)
+		on_complete(cmd .. " could not be started: " .. err)
 	else
 		stdout:read_start(on_stdout_read)
 		stderr:read_start(on_stderr_read)
