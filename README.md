@@ -6,6 +6,9 @@ making it easy to interact with the AI and get the assistance you need.
 
 **Note:** This plugin is in early it's early changes and is subject to change.
 
+## Motivation
+The primary motivation behind this plugin is to provide a seamless integration of AI chat-assistants, like ChatGPT, into your Neovim coding workflow. The goal is to create a tool that works in harmony with you, allowing you to ask questions and receive assistance without disrupting your focus or coding rhythm. Unlike most existing plugins, which tend to prioritize entertainment over productivity, this plugin emphasizes efficiency and utility. By facilitating a smooth and responsive coding experience, it aims to enhance productivity and make coding more enjoyable.
+
 ## Installation
 To install NeoAI, you can use your favorite plugin manager. For example,
 with vim-plug, add the following line to your `init.vim` or `.vimrc`, note that
