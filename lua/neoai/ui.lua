@@ -96,7 +96,7 @@ M.create_ui = function()
 			readonly = false,
 		},
 		win_options = {
-			winblend = 10,
+			winblend = 0,
 			winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
 			wrap = true,
 		},
