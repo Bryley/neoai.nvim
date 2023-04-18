@@ -22,6 +22,26 @@ M.clear_input = function()
 	end
 end
 
+M.get_component_heights = function (output_height_percentage)
+  local lines_height = vim.api.nvim_get_option("lines")
+  local statusline_height = vim.o.laststatus == 0 and 0 or 1 -- height of the statusline if present
+  local cmdline_height = vim.o.cmdheight -- height of the cmdline if present
+  local tabline_height = vim.o.showtabline == 0 and 0 or 1 -- height of the tabline if present
+  local total_height = lines_height
+  local used_height = statusline_height + cmdline_height + tabline_height
+  local layout_height = total_height - used_height
+  local output_height = math.floor(layout_height * output_height_percentage / 100)
+  local prompt_height = layout_height - output_height
+  local starting_row = tabline_height == 0 and 0 or 1
+
+  return {
+    starting_row = starting_row,
+    layout = layout_height,
+    output = output_height,
+    prompt = prompt_height,
+  }
+end
+
 M.is_focused = function()
 	if M.input_popup == nil then
 		vim.notify("NeoAI GUI needs to be open", vim.log.levels.ERROR)
@@ -96,29 +116,28 @@ M.create_ui = function()
 			readonly = false,
 		},
 		win_options = {
-			winblend = 10,
+			winblend = 0,
 			winhighlight = "Normal:Normal,FloatBorder:FloatBorder",
 			wrap = true,
 		},
 	})
 
-	local output_height = config.options.ui.output_popup_height
-
+  local component_heights = M.get_component_heights(config.options.ui.output_popup_height)
 	M.layout = Layout(
 		{
 			relative = "editor",
 			position = {
-				row = "0%",
+				row = component_heights.starting_row,
 				col = "100%",
 			},
 			size = {
 				width = config.options.ui.width .. "%",
-				height = "100%",
+				height = component_heights.layout,
 			},
 		},
 		Layout.Box({
-			Layout.Box(M.output_popup, { size = output_height .. "%" }),
-			Layout.Box(M.input_popup, { size = (100 - output_height) .. "%" }),
+			Layout.Box(M.output_popup, { size = component_heights.output }),
+			Layout.Box(M.input_popup, { size = component_heights.prompt }),
 		}, { dir = "col" })
 	)
 	M.layout:mount()
