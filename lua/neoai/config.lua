@@ -38,7 +38,7 @@ M.get_defaults = function()
             {
                 name = "textify",
                 key = "<leader>as",
-                desc = "fix text with AI",
+                desc = "NeoAI fix text with AI",
                 use_context = true,
                 prompt = [[
                     Please rewrite the text to make it more readable, clear,
@@ -51,7 +51,7 @@ M.get_defaults = function()
             {
                 name = "gitcommit",
                 key = "<leader>ag",
-                desc = "generate git commit message",
+                desc = "NeoAI generate git commit message",
                 use_context = false,
                 prompt = function()
                     return [[
