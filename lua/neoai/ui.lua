@@ -152,6 +152,7 @@ M.create_ui = function()
 	chat.new_chat_history()
 
 	local input_buffer = M.input_popup.bufnr
+	local output_buffer = M.output_popup.bufnr
 
 	M.submit_prompt = function()
 		local lines = vim.api.nvim_buf_get_lines(input_buffer, 0, -1, false)
@@ -164,6 +165,10 @@ M.create_ui = function()
 	vim.api.nvim_buf_set_keymap(input_buffer, "i", "<C-Enter>", "<Enter>", opts)
 	vim.api.nvim_buf_set_keymap(input_buffer, "i", "<Enter>", "<cmd>lua require('neoai.ui').submit_prompt()<cr>", opts)
 
+
+	vim.api.nvim_buf_set_keymap(input_buffer, "n", "<C-k>", "<cmd>lua vim.api.nvim_set_current_win(require('neoai.ui').output_popup.winid)<cr>", opts)
+	vim.api.nvim_buf_set_keymap(output_buffer, "n", "<C-j>", "<cmd>lua vim.api.nvim_set_current_win(require('neoai.ui').input_popup.winid)<cr>", opts)
+  
 	M.set_destroy_key_mappings(input_buffer)
 end
 
