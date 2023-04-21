@@ -65,7 +65,7 @@ M.create_ui = function()
 		return
 	end
 
-    local current_model = chat.get_current_model()
+	local current_model = chat.get_current_model()
 
 	M.output_popup = Popup({
 		enter = false,
@@ -142,14 +142,14 @@ M.create_ui = function()
 	)
 	M.layout:mount()
 
-    M.output_popup:on({ event.BufDelete, event.WinClosed }, function ()
-        M.destroy_ui()
-    end)
-    M.input_popup:on({ event.BufDelete, event.WinClosed }, function ()
-        M.destroy_ui()
-    end)
+	M.output_popup:on({ event.BufDelete, event.WinClosed }, function()
+		M.destroy_ui()
+	end)
+	M.input_popup:on({ event.BufDelete, event.WinClosed }, function()
+		M.destroy_ui()
+	end)
 
-    chat.new_chat_history()
+	chat.new_chat_history()
 
 	local input_buffer = M.input_popup.bufnr
 
@@ -163,6 +163,26 @@ M.create_ui = function()
 	local opts = { noremap = true, silent = true }
 	vim.api.nvim_buf_set_keymap(input_buffer, "i", "<C-Enter>", "<Enter>", opts)
 	vim.api.nvim_buf_set_keymap(input_buffer, "i", "<Enter>", "<cmd>lua require('neoai.ui').submit_prompt()<cr>", opts)
+
+	M.set_destroy_key_mappings(input_buffer)
+end
+
+-- This function sets a keymap for the input buffer. In normal mode, pressing
+-- the '<Esc>' or <Ctrl-c> key triggers the 'neoai.ui' module's 'destroy_ui' function, which
+M.set_destroy_key_mappings = function(input_buffer)
+	local mappings = {
+		"<Esc>",
+		"<C-c>",
+	}
+	for _, key in ipairs(mappings) do
+		vim.api.nvim_buf_set_keymap(
+			input_buffer,
+			"n",
+			key,
+			"<cmd>lua require('neoai.ui').destroy_ui()<cr>",
+			{ noremap = true, silent = true }
+		)
+	end
 end
 
 M.send_prompt = function(prompt)
