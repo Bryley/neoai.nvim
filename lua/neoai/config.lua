@@ -13,7 +13,8 @@ M.get_defaults = function()
         models = {
             {
                 name = "openai",
-                model = "gpt-3.5-turbo"
+                model = "gpt-3.5-turbo",
+                params = nil,
             },
         },
         register_output = {
@@ -32,6 +33,10 @@ M.get_defaults = function()
                     .. "to in our upcoming conversations (TEXT/CODE ONLY):\n\n"
                     .. context
             end,
+        },
+        mappings = {
+            ["select_up"] = "<C-k>",
+            ["select_down"] = "<C-j>",
         },
         open_api_key_env = "OPENAI_API_KEY",
         shortcuts = {
@@ -76,6 +81,7 @@ end
 ---@class Model_Options
 ---@field name "openai" The name of the model provider
 ---@field model string | string[] The name of the model to use or list of model names to use
+---@field params table<string, string> | nil Params to pass into the model(s) or nil is none.
 
 ---@class Inject_Options
 ---@field cutoff_width integer | nil When injecting if the text becomes longer than this then it should go to a new line, if nil then ignore
@@ -100,6 +106,7 @@ end
 ---@field inject Inject_Options The inject options
 ---@field prompts Prompt_Options The custom prompt options
 ---@field open_api_key_env string The environment variable that contains the openai api key
+---@field mappings table<"select_up" | "select_down", nil|string|string[]> A table of actions with it's mapping(s)
 ---@field shortcuts Shortcut[] Array of shortcuts
 M.options = {}
 

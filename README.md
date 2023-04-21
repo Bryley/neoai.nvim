@@ -162,6 +162,7 @@ require('neoai').setup{
         {
             name = "openai",
             model = "gpt-3.5-turbo"
+            params = nil,
         },
     },
     register_output = {
@@ -180,6 +181,10 @@ require('neoai').setup{
                 .. "to in our upcoming conversations:\n\n"
                 .. context
         end,
+    },
+    mappings = {
+        ["select_up"] = "<C-k>",
+        ["select_down"] = "<C-j>",
     },
     open_api_key_env = "OPENAI_API_KEY",
     shortcuts = {
@@ -230,6 +235,7 @@ available options are as follows:
  - `models`: A list of models to use:
     - `name`: The name of the model provider (eg. "openai")
     - `model`: Either a string of the model name to use or a list of model names
+    - `params`: A table of parameters to pass into the model (eg. temperature, top_p)
 
 ### Register Output
  - `register_output`: A table with a register as the key and a function that takes the raw output from the AI and outputs what you want to save into that register. Example:
@@ -260,6 +266,15 @@ end
 
 ### OpenAI API Key
  - `open_api_key_env`: The environment variable that contains the OpenAI API key (default: "OPENAI_API_KEY").
+
+
+### Mappings
+ - `mappings`: A table containing the following actions that can be keys:
+
+    - `select_up`: Selects the output window when in the input window
+    - `select_down`: Selects the input window when in the output window
+
+The value is the keybinding(s) for that actions or `nil` if no action
 
 ### Shortcut Options
  - `shortcuts`: An array of shortcuts. Each shortcut is a table containing:
