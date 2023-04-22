@@ -91,3 +91,74 @@ end, {
     range = true,
     complete = require("neoai.shortcuts").complete_shortcut
 })
+
+-- Versions of the commands that use vim.ui.input for retrieving the prompt/context
+-- Plain
+vim.api.nvim_create_user_command("NeoAIPrompt", function(_)
+	vim.ui.input({ prompt = "Prompt: " }, function(text)
+		require("neoai").smart_toggle(text)
+	end)
+end, {
+	nargs = 0,
+})
+
+-- Context
+vim.api.nvim_create_user_command("NeoAIContextPrompt", function(opts)
+	vim.ui.input({ prompt = "Context: " }, function(text)
+		require("neoai").context_smart_toggle(text, opts.line1, opts.line2)
+	end)
+end, {
+	nargs = 0,
+	range = "%",
+})
+
+-- Inject
+vim.api.nvim_create_user_command(
+	"NeoAIInjectPrompt",
+	function(_)
+		vim.ui.input({ prompt = "Prompt: " }, function(text)
+			require("neoai").inject(text)
+		end)
+	end,
+	{
+		nargs = 0,
+	}
+)
+
+vim.api.nvim_create_user_command(
+	"NeoAIInjectCodePrompt",
+	function(_)
+		vim.ui.input({ prompt = "Prompt: " }, function(text)
+			require("neoai").inject(text, require('neoai.utils').extract_code_snippets)
+		end)
+	end,
+	{
+		nargs = 0,
+	}
+)
+
+vim.api.nvim_create_user_command(
+	"NeoAIInjectContextPrompt",
+	function(opts)
+		vim.ui.input({ prompt = "Context: " }, function(text)
+			require("neoai").context_inject(text, nil, opts.line1, opts.line2)
+		end)
+	end,
+	{
+		range = "%",
+		nargs = 0,
+	}
+)
+
+vim.api.nvim_create_user_command(
+	"NeoAIInjectContextCodePrompt",
+	function(opts)
+		vim.ui.input({ prompt = "Context: " }, function(text)
+			require("neoai").context_inject(text, require('neoai.utils').extract_code_snippets, opts.line1, opts.line2)
+		end)
+	end,
+	{
+		range = "%",
+		nargs = 0,
+	}
+)
