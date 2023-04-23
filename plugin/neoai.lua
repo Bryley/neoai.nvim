@@ -96,7 +96,7 @@ end, {
 -- Plain
 vim.api.nvim_create_user_command("NeoAIPrompt", function(_)
 	vim.ui.input({ prompt = "Prompt: " }, function(text)
-		if string.len(text) == 0 then return end
+		if text == nil or string.len(text) == 0 then return end
 		require("neoai").smart_toggle(text)
 	end)
 end, {
@@ -106,7 +106,7 @@ end, {
 -- Context
 vim.api.nvim_create_user_command("NeoAIContextPrompt", function(opts)
 	vim.ui.input({ prompt = "Context: " }, function(text)
-		if string.len(text) == 0 then return end
+		if text == nil or string.len(text) == 0 then return end
 		require("neoai").context_smart_toggle(text, opts.line1, opts.line2)
 	end)
 end, {
@@ -119,7 +119,7 @@ vim.api.nvim_create_user_command(
 	"NeoAIInjectPrompt",
 	function(_)
 		vim.ui.input({ prompt = "Prompt: " }, function(text)
-			if string.len(text) == 0 then return end
+			if text == nil or string.len(text) == 0 then return end
 			require("neoai").inject(text)
 		end)
 	end,
@@ -132,7 +132,7 @@ vim.api.nvim_create_user_command(
 	"NeoAIInjectCodePrompt",
 	function(_)
 		vim.ui.input({ prompt = "Prompt: " }, function(text)
-			if string.len(text) == 0 then return end
+			if text == nil or string.len(text) == 0 then return end
 			require("neoai").inject(text, require('neoai.utils').extract_code_snippets)
 		end)
 	end,
@@ -145,7 +145,7 @@ vim.api.nvim_create_user_command(
 	"NeoAIInjectContextPrompt",
 	function(opts)
 		vim.ui.input({ prompt = "Context: " }, function(text)
-			if string.len(text) == 0 then return end
+			if text == nil or string.len(text) == 0 then return end
 			require("neoai").context_inject(text, nil, opts.line1, opts.line2)
 		end)
 	end,
@@ -159,7 +159,7 @@ vim.api.nvim_create_user_command(
 	"NeoAIInjectContextCodePrompt",
 	function(opts)
 		vim.ui.input({ prompt = "Context: " }, function(text)
-			if string.len(text) == 0 then return end
+			if text == nil or string.len(text) == 0 then return end
 			require("neoai").context_inject(text, require('neoai.utils').extract_code_snippets, opts.line1, opts.line2)
 		end)
 	end,
