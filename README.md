@@ -60,6 +60,11 @@ For packer:
 use ({
     "Bryley/neoai.nvim",
     requires = { "MunifTanjim/nui.nvim" },
+    config = function()
+        require("neoai").setup({
+            -- Options go here
+        })
+    end,
 })
 
 
