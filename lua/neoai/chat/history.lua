@@ -12,40 +12,39 @@ local ChatHistory = { model = "", params = {}, messages = {} }
 ---@param context string | nil The context to use
 ---@return ChatHistory
 function ChatHistory:new(model, params, context)
-    local obj = {}
+	local obj = {}
 
-    setmetatable(obj, self)
-    self.__index = self
+	setmetatable(obj, self)
+	self.__index = self
 
-    self.model = model
-    self.params = params or {}
-    self.messages = {}
+	self.model = model
+	self.params = params or {}
+	self.messages = {}
 
-    if context ~= nil then
-        local context_prompt = config.options.prompts.context_prompt(context)
-        self:set_prompt(context_prompt)
-    end
-    return obj
+	if context ~= nil then
+		local context_prompt = config.options.prompts.context_prompt(context)
+		self:set_prompt(context_prompt)
+	end
+	return obj
 end
 
 --- @param prompt string system prompt
 function ChatHistory:set_prompt(prompt)
-    local system_msg = {
-        role = "system",
-        content = prompt,
-    }
-    table.insert(self.messages, system_msg)
+	local system_msg = {
+		role = "system",
+		content = prompt,
+	}
+	table.insert(self.messages, system_msg)
 end
 
 ---@param user boolean True if user sent msg
 ---@param msg string The message to add
 function ChatHistory:add_message(user, msg)
-    local role = user and "user" or "assistant"
-
-    table.insert(self.messages, {
-        role = role,
-        content = msg,
-    })
+	local role = user and "user" or "assistant"
+	table.insert(self.messages, {
+		role = role,
+		content = msg,
+	})
 end
 
 return ChatHistory

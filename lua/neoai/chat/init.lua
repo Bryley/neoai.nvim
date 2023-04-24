@@ -62,6 +62,7 @@ end
 M.reset = function()
     M.context = nil
     M.chat_history = nil
+    M.get_current_model().name.cancel_stream()
 end
 
 local chunks = {}
