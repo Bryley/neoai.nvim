@@ -59,7 +59,12 @@ For packer:
 ```lua
 use ({
     "Bryley/neoai.nvim",
-    require = { "MunifTanjim/nui.nvim" },
+    requires = { "MunifTanjim/nui.nvim" },
+    config = function()
+        require("neoai").setup({
+            -- Options go here
+        })
+    end,
 })
 
 
