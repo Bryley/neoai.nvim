@@ -9,6 +9,7 @@ M.get_defaults = function()
             input_popup_text = "Prompt",
             width = 30,               -- As percentage eg. 30%
             output_popup_height = 80, -- As percentage eg. 80%
+            submit = "<Enter>",
         },
         models = {
             {
@@ -77,6 +78,7 @@ end
 ---@field input_popup_text string Header text shown on input popup window
 ---@field width integer The width of the window as a percentage number 30 = 30%
 ---@field output_popup_height integer The height of the output popup as a percentage
+---@field submit string The key binding to submit the input
 
 ---@class Model_Options
 ---@field name "openai" The name of the model provider

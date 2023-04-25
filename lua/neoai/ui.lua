@@ -164,8 +164,10 @@ M.create_ui = function()
     end
 
     local opts = { noremap = true, silent = true }
-    vim.api.nvim_buf_set_keymap(input_buffer, "i", "<C-Enter>", "<Enter>", opts)
-    vim.api.nvim_buf_set_keymap(input_buffer, "i", "<Enter>", "<cmd>lua require('neoai.ui').submit_prompt()<cr>", opts)
+    if string.lower(config.options.ui.submit) == "<enter>" then
+        vim.api.nvim_buf_set_keymap(input_buffer, "i", "<C-Enter>", "<Enter>", opts)
+    end
+    vim.api.nvim_buf_set_keymap(input_buffer, "i", config.options.ui.submit, "<cmd>lua require('neoai.ui').submit_prompt()<cr>", opts)
 
     local key = config.options.mappings["select_up"]
     if key ~= nil then

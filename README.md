@@ -90,7 +90,8 @@ being inside your editor.
 ![Normal Mode GUI](./gifs/normal_mode.gif)
 
 In the Prompt Buffer, you can send text by pressing Enter while in insert mode.
-Additionally, you can insert a newline by using Control Enter.
+Additionally, you can insert a newline by using Control Enter. This mapping
+can be changed in the config.
 
 Also note that the plugin has a feature where the output from the model
 automatically gets saved to the `g` register and all code snippets get saved to
@@ -157,6 +158,7 @@ require('neoai').setup{
         input_popup_text = "Prompt",
         width = 30,      -- As percentage eg. 30%
         output_popup_height = 80, -- As percentage eg. 80%
+        submit = "<Enter>", -- Key binding to submit the prompt
     },
     models = {
         {
@@ -230,6 +232,7 @@ available options are as follows:
  - `input_popup_text`: Header text shown on the input popup window (default: "Prompt").
  - `width`: Width of the window as a percentage (e.g., 30 = 30%, default: 30).
  - `output_popup_height`: Height of the output popup as a percentage (e.g., 80 = 80%, default: 80).
+ - `submit`: Key binding to submit the prompt. If set to <Enter>, <C-Enter> will be mapped to insert a newline. (default: "<Enter>").
 
 ### Model Options
  - `models`: A list of models to use:
