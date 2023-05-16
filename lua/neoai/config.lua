@@ -40,6 +40,7 @@ M.get_defaults = function()
             ["select_down"] = "<C-j>",
         },
         open_api_key_env = "OPENAI_API_KEY",
+        open_api_url = "https://api.openai.com/v1/chat/completions",
         shortcuts = {
             {
                 name = "textify",
@@ -108,6 +109,7 @@ end
 ---@field inject Inject_Options The inject options
 ---@field prompts Prompt_Options The custom prompt options
 ---@field open_api_key_env string The environment variable that contains the openai api key
+---@field open_api_url string The openai api url
 ---@field mappings table<"select_up" | "select_down", nil|string|string[]> A table of actions with it's mapping(s)
 ---@field shortcuts Shortcut[] Array of shortcuts
 M.options = {}

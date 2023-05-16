@@ -270,6 +270,9 @@ end
 ### OpenAI API Key
  - `open_api_key_env`: The environment variable that contains the OpenAI API key (default: "OPENAI_API_KEY").
 
+### Openai API Url
+- `openai_api_url`: The openai api url (default: "https://api.openai.com/v1/chat/completions")
+
 
 ### Mappings
  - `mappings`: A table containing the following actions that can be keys:
