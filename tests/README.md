@@ -6,5 +6,5 @@ Tests are done with
 By cd'ing into the Neoai folder root project folder and running:
 
 ```bash
-nvim --headless -c 'PlenaryBustedDirectory tests'
+./tests/run
 ```
