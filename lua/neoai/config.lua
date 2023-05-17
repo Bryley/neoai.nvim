@@ -8,102 +8,102 @@ local M = {}
 ---Get default options
 ---@return Options
 M.get_defaults = function()
-	return {
-		ui = {
-			output_popup_text = "NeoAI",
-			input_popup_text = "Prompt",
-			width = 30, -- As percentage eg. 30%
-			output_popup_height = 80, -- As percentage eg. 80%
-			submit = "<Enter>",
-		},
-		models = {
-			{
-				name = "openai",
-				model = "gpt-3.5-turbo",
-				params = nil,
-			},
-		},
-		register_output = {
-			["g"] = function(output)
-				return output
-			end,
-			["c"] = require("neoai.utils").extract_code_snippets,
-		},
-		inject = {
-			cutoff_width = 75,
-		},
-		prompts = {
-			context_prompt = function(context)
-				return "Hey, I'd like to provide some context for future "
-					.. "messages. Here is the code/text that I want to refer "
-					.. "to in our upcoming conversations (TEXT/CODE ONLY):\n\n"
-					.. context
-			end,
-		},
-		mappings = {
-			["select_up"] = "<C-k>",
-			["select_down"] = "<C-j>",
-		},
-		open_ai = {
-			api_key = {
-				env = "OPENAI_API_KEY",
-				value = nil,
-				get = function()
-					local open_api_key = nil
-					if M.options.open_ai.api_key.value then
-						open_api_key = M.options.open_ai.api_key.value
-					else
-						local env_name
-						if M.options.open_api_key_env then
-							env_name = M.options.open_api_key_env
-							logger.deprecation("config.open_api_key_env", "config.open_ai.api_key.env")
-						else
-							env_name = M.options.open_ai.api_key.env
-						end
-						open_api_key = os.getenv(env_name)
-					end
+    return {
+        ui = {
+            output_popup_text = "NeoAI",
+            input_popup_text = "Prompt",
+            width = 30, -- As percentage eg. 30%
+            output_popup_height = 80, -- As percentage eg. 80%
+            submit = "<Enter>",
+        },
+        models = {
+            {
+                name = "openai",
+                model = "gpt-3.5-turbo",
+                params = nil,
+            },
+        },
+        register_output = {
+            ["g"] = function(output)
+                return output
+            end,
+            ["c"] = require("neoai.utils").extract_code_snippets,
+        },
+        inject = {
+            cutoff_width = 75,
+        },
+        prompts = {
+            context_prompt = function(context)
+                return "Hey, I'd like to provide some context for future "
+                    .. "messages. Here is the code/text that I want to refer "
+                    .. "to in our upcoming conversations (TEXT/CODE ONLY):\n\n"
+                    .. context
+            end,
+        },
+        mappings = {
+            ["select_up"] = "<C-k>",
+            ["select_down"] = "<C-j>",
+        },
+        open_ai = {
+            api_key = {
+                env = "OPENAI_API_KEY",
+                value = nil,
+                get = function()
+                    local open_api_key = nil
+                    if M.options.open_ai.api_key.value then
+                        open_api_key = M.options.open_ai.api_key.value
+                    else
+                        local env_name
+                        if M.options.open_api_key_env then
+                            env_name = M.options.open_api_key_env
+                            logger.deprecation("config.open_api_key_env", "config.open_ai.api_key.env")
+                        else
+                            env_name = M.options.open_ai.api_key.env
+                        end
+                        open_api_key = os.getenv(env_name)
+                    end
 
-					if open_api_key then
-						return open_api_key
-					end
-					local msg = M.options.open_ai.api_key.env
-						.. " environment variable is not set, and open_api_key.value is empty"
-					logger.error(msg)
-					error(msg)
-				end,
-			},
-		},
-		shortcuts = {
-			{
-				name = "textify",
-				key = "<leader>as",
-				desc = "NeoAI fix text with AI",
-				use_context = true,
-				prompt = [[
+                    if open_api_key then
+                        return open_api_key
+                    end
+                    local msg = M.options.open_ai.api_key.env
+                        .. " environment variable is not set, and open_api_key.value is empty"
+                    logger.error(msg)
+                    error(msg)
+                end,
+            },
+        },
+        shortcuts = {
+            {
+                name = "textify",
+                key = "<leader>as",
+                desc = "NeoAI fix text with AI",
+                use_context = true,
+                prompt = [[
                     Please rewrite the text to make it more readable, clear,
                     concise, and fix any grammatical, punctuation, or spelling
                     errors
                 ]],
-				modes = { "v" },
-				strip_function = nil,
-			},
-			{
-				name = "gitcommit",
-				key = "<leader>ag",
-				desc = "NeoAI generate git commit message",
-				use_context = false,
-				prompt = function()
-					return [[
+                modes = { "v" },
+                strip_function = nil,
+            },
+            {
+                name = "gitcommit",
+                key = "<leader>ag",
+                desc = "NeoAI generate git commit message",
+                use_context = false,
+                prompt = function()
+                    return [[
                         Using the following git diff generate a consise and
                         clear git commit message, with a short title summary
                         that is 75 characters or less:
                     ]] .. vim.fn.system("git diff --cached")
-				end,
-				modes = { "n" },
-				strip_function = nil,
-			},
-		},
-	}
+                end,
+                modes = { "n" },
+                strip_function = nil,
+            },
+        },
+    }
 end
 
 ---@class UI_Options
@@ -158,9 +158,9 @@ M.options = {}
 ---@param options Options | nil
 ---@return Config
 M.setup = function(options)
-	options = options or {}
-	M.options = vim.tbl_deep_extend("force", {}, M.get_defaults(), options)
-	return M
+    options = options or {}
+    M.options = vim.tbl_deep_extend("force", {}, M.get_defaults(), options)
+    return M
 end
 
 return M
