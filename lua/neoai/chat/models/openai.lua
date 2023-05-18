@@ -6,10 +6,11 @@ local M = {}
 
 M.name = "OpenAI"
 
-local chunks = {}
+M._chunks = {}
 local raw_chunks = {}
+
 M.get_current_output = function()
-    return table.concat(chunks, "")
+    return table.concat(M._chunks, "")
 end
 
 ---@param chunk string
@@ -42,7 +43,7 @@ M._recieve_chunk = function(chunk, on_stdout_chunk)
         end
         on_stdout_chunk(path)
         -- append_to_output(path, 0)
-        table.insert(chunks, path)
+        table.insert(M._chunks, path)
         ::continue::
     end
 end

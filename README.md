@@ -168,19 +168,19 @@ To set up the plugin, add the following code with default values to your `init.l
 under the `config` option if using lazy.nvim or packer.nvim.
 
 ```lua
-require('neoai').setup{
+require("neoai").setup({
     -- Below are the default options, feel free to override what you would like changed
     ui = {
         output_popup_text = "NeoAI",
         input_popup_text = "Prompt",
-        width = 30,      -- As percentage eg. 30%
+        width = 30, -- As percentage eg. 30%
         output_popup_height = 80, -- As percentage eg. 80%
         submit = "<Enter>", -- Key binding to submit the prompt
     },
     models = {
         {
             name = "openai",
-            model = "gpt-3.5-turbo"
+            model = "gpt-3.5-turbo",
             params = nil,
         },
     },
@@ -207,8 +207,8 @@ require('neoai').setup{
     },
     open_ai = {
         api_key = {
-            env = "OPENAI_API_KEY"
-            value = nil
+            env = "OPENAI_API_KEY",
+            value = nil,
             -- `get` is is a function that retrieves an API key, can be used to override the default method.
             -- get = function() ... end
 
@@ -219,8 +219,8 @@ require('neoai').setup{
             --     key = string.gsub(key, "\n", "")
             --     return key
             -- end,
-        }
-    }
+        },
+    },
     shortcuts = {
         {
             name = "textify",
@@ -240,7 +240,7 @@ require('neoai').setup{
             key = "<leader>ag",
             desc = "generate git commit message",
             use_context = false,
-            prompt = function ()
+            prompt = function()
                 return [[
                     Using the following git diff generate a consise and
                     clear git commit message, with a short title summary
@@ -251,7 +251,7 @@ require('neoai').setup{
             strip_function = nil,
         },
     },
-}
+})
 ```
 
 ### Options
