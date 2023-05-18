@@ -50,11 +50,11 @@ require("neoai").setup({
 
             -- Here is some code for a function that retrieves an API key. You can use it with
             -- the Linux 'pass' application.
-            get = function()
-                local key = vim.fn.system("pass show openai/mytestkey")
-                key = string.gsub(key, "\n", "")
-                return key
-            end,
+            -- get = function()
+            --     local key = vim.fn.system("pass show openai/mytestkey")
+            --     key = string.gsub(key, "\n", "")
+            --     return key
+            -- end,
         },
     },
     shortcuts = {
