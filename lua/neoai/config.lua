@@ -1,3 +1,8 @@
+local logger = require("neoai.logger")
+---@class Config
+---@field options Options
+---@field setup function
+---@field get_defaults function
 local M = {}
 
 ---Get default options
@@ -7,7 +12,7 @@ M.get_defaults = function()
         ui = {
             output_popup_text = "NeoAI",
             input_popup_text = "Prompt",
-            width = 30,               -- As percentage eg. 30%
+            width = 30, -- As percentage eg. 30%
             output_popup_height = 80, -- As percentage eg. 80%
             submit = "<Enter>",
         },
@@ -39,7 +44,35 @@ M.get_defaults = function()
             ["select_up"] = "<C-k>",
             ["select_down"] = "<C-j>",
         },
-        open_api_key_env = "OPENAI_API_KEY",
+        open_ai = {
+            api_key = {
+                env = "OPENAI_API_KEY",
+                value = nil,
+                get = function()
+                    local open_api_key = nil
+                    if M.options.open_ai.api_key.value then
+                        open_api_key = M.options.open_ai.api_key.value
+                    else
+                        local env_name
+                        if M.options.open_api_key_env then
+                            env_name = M.options.open_api_key_env
+                            logger.deprecation("config.open_api_key_env", "config.open_ai.api_key.env")
+                        else
+                            env_name = M.options.open_ai.api_key.env
+                        end
+                        open_api_key = os.getenv(env_name)
+                    end
+
+                    if open_api_key then
+                        return open_api_key
+                    end
+                    local msg = M.options.open_ai.api_key.env
+                        .. " environment variable is not set, and open_api_key.value is empty"
+                    logger.error(msg)
+                    error(msg)
+                end,
+            },
+        },
         shortcuts = {
             {
                 name = "textify",
@@ -100,6 +133,14 @@ end
 ---@field modes ("n" | "v")[] A list of modes to set the keybind up for "n" for normal, "v" for visual
 ---@field strip_function (fun(output: string): string) | nil The strip function to use
 
+---@class Open_AI_Options
+---@field api_key Open_AI_Key_Options The open api key options
+
+---@class Open_AI_Key_Options
+---@field env string The environment variable to get the open api key from
+---@field value string | nil The value of the open api key to use, if nil then use the environment variable
+---@field get fun(): string The function to get the open api key
+
 ---@class Options
 ---@field ui UI_Options UI configurations
 ---@field model string The OpenAI model to use by default @depricated
@@ -108,15 +149,18 @@ end
 ---@field inject Inject_Options The inject options
 ---@field prompts Prompt_Options The custom prompt options
 ---@field open_api_key_env string The environment variable that contains the openai api key
+---@field open_ai Open_AI_Options The open api key options
 ---@field mappings table<"select_up" | "select_down", nil|string|string[]> A table of actions with it's mapping(s)
 ---@field shortcuts Shortcut[] Array of shortcuts
 M.options = {}
 
 ---Setup options
 ---@param options Options | nil
+---@return Config
 M.setup = function(options)
     options = options or {}
     M.options = vim.tbl_deep_extend("force", {}, M.get_defaults(), options)
+    return M
 end
 
 return M

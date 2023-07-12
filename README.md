@@ -1,3 +1,4 @@
+![NeoAI tests](https://github.com/Bryley/neoai.nvim/actions/workflows/main.yml/badge.svg)
 # NeoAI
 NeoAI is a Neovim plugin that brings the power of OpenAI's GPT-4 directly to
 your editor. It helps you generate code, rewrite text, and even get suggestions
@@ -60,6 +61,24 @@ For packer:
 use ({
     "Bryley/neoai.nvim",
     require = { "MunifTanjim/nui.nvim" },
+    cmd = {
+        "NeoAI",
+        "NeoAIOpen",
+        "NeoAIClose",
+        "NeoAIToggle",
+        "NeoAIContext",
+        "NeoAIContextOpen",
+        "NeoAIContextClose",
+        "NeoAIInject",
+        "NeoAIInjectCode",
+        "NeoAIInjectContext",
+        "NeoAIInjectContextCode",
+    },
+    config = function()
+        require("neoai").setup({
+            -- Options go here
+        })
+    end,
 })
 
 
@@ -146,24 +165,23 @@ monitored through [this link](https://platform.openai.com/account/usage)
 
 
 ## Setup
-To set up the plugin, add the following to your `init.vim` or `.vimrc` (or put
-under the `config` option if using lazy.nvim:
+To set up the plugin, add the following code with default values to your `init.lua` (or put
+under the `config` option if using lazy.nvim or packer.nvim.
 
 ```lua
-lua << EOF
-require('neoai').setup{
+require("neoai").setup({
     -- Below are the default options, feel free to override what you would like changed
     ui = {
         output_popup_text = "NeoAI",
         input_popup_text = "Prompt",
-        width = 30,      -- As percentage eg. 30%
+        width = 30, -- As percentage eg. 30%
         output_popup_height = 80, -- As percentage eg. 80%
         submit = "<Enter>", -- Key binding to submit the prompt
     },
     models = {
         {
             name = "openai",
-            model = "gpt-3.5-turbo"
+            model = "gpt-3.5-turbo",
             params = nil,
         },
     },
@@ -188,7 +206,22 @@ require('neoai').setup{
         ["select_up"] = "<C-k>",
         ["select_down"] = "<C-j>",
     },
-    open_api_key_env = "OPENAI_API_KEY",
+    open_ai = {
+        api_key = {
+            env = "OPENAI_API_KEY",
+            value = nil,
+            -- `get` is is a function that retrieves an API key, can be used to override the default method.
+            -- get = function() ... end
+
+            -- Here is some code for a function that retrieves an API key. You can use it with
+            -- the Linux 'pass' application.
+            -- get = function()
+            --     local key = vim.fn.system("pass show openai/mytestkey")
+            --     key = string.gsub(key, "\n", "")
+            --     return key
+            -- end,
+        },
+    },
     shortcuts = {
         {
             name = "textify",
@@ -208,7 +241,7 @@ require('neoai').setup{
             key = "<leader>ag",
             desc = "generate git commit message",
             use_context = false,
-            prompt = function ()
+            prompt = function()
                 return [[
                     Using the following git diff generate a consise and
                     clear git commit message, with a short title summary
@@ -219,8 +252,7 @@ require('neoai').setup{
             strip_function = nil,
         },
     },
-}
-EOF
+})
 ```
 
 ### Options
@@ -267,9 +299,11 @@ context_prompt = function(context)
 end
 ```
 
-### OpenAI API Key
- - `open_api_key_env`: The environment variable that contains the OpenAI API key (default: "OPENAI_API_KEY").
-
+### OpenAI Options:
+- `open_api_key_env` (deprecated, use `api_key.env` instead): The environment variable containing the OpenAI API key. The default value is "OPENAI_API_KEY ".
+- `api_key.env`: The environment variable containing the OpenAI API key. The default value is "OPENAI_API_KEY".
+- `api_key.value`: The OpenAI API key, which takes precedence over `api_key .env`.
+- `api_key.get`: A function that retrieves the OpenAI API key. For an example implementation, refer to the [Setup](#Setup) section. It has the higher precedence.
 
 ### Mappings
  - `mappings`: A table containing the following actions that can be keys:
