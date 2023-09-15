@@ -12,13 +12,31 @@ from time import mktime
 from urllib.parse import urlencode
 from wsgiref.handlers import format_date_time
 import argparse
+import importlib
+import subprocess
+import os
 
-import websocket  # 使用websocket_client
 answer = ""
 
 
+def import_package(package_name, import_name):
+    try:
+        importlib.import_module(import_name)
+    except ImportError:
+        install_package(package_name)
+        importlib.import_module(import_name)
+
+
+def install_package(package_name):
+    try:
+        with open(os.devnull, 'w') as null:
+            subprocess.check_call(
+                ["pip", "install", package_name], stderr=null, stdout=null)
+    except subprocess.CalledProcessError:
+        print(f"Failed to install {package_name}")
+
+
 class WSParam(object):
-    # 初始化
     def __init__(self, APPID, APIKey, APISecret, spark_url):
         self.APPID = APPID
         self.APIKey = APIKey
@@ -27,18 +45,14 @@ class WSParam(object):
         self.path = urlparse(spark_url).path
         self.spark_url = spark_url
 
-    # 生成url
     def create_url(self):
-        # 生成RFC1123格式的时间戳
         now = datetime.now()
         date = format_date_time(mktime(now.timetuple()))
 
-        # 拼接字符串
         signature_origin = "host: " + self.host + "\n"
         signature_origin += "date: " + date + "\n"
         signature_origin += "GET " + self.path + " HTTP/1.1"
 
-        # 进行hmac-sha256进行加密
         signature_sha = hmac.new(self.APISecret.encode('utf-8'), signature_origin.encode('utf-8'),
                                  digestmod=hashlib.sha256).digest()
 
@@ -50,29 +64,23 @@ class WSParam(object):
         authorization = base64.b64encode(
             authorization_origin.encode('utf-8')).decode(encoding='utf-8')
 
-        # 将请求的鉴权参数组合为字典
         v = {
             "authorization": authorization,
             "date": date,
             "host": self.host
         }
-        # 拼接鉴权参数，生成url
         url = self.spark_url + '?' + urlencode(v)
-        # 此处打印出建立连接时候的url,参考本demo的时候可取消上方打印的注释，比对相同参数时生成的url与自己代码生成的url是否一致
         return url
 
 
-# 收到websocket错误的处理
 def on_error(ws, error):
     print("### error:", error)
 
 
-# 收到websocket关闭的处理
 def on_close(ws, one, two):
     print(" ")
 
 
-# 收到websocket连接建立的处理
 def on_open(ws):
     thread.start_new_thread(run, (ws,))
 
@@ -87,13 +95,7 @@ def run(ws, *args):
     ws.send(data)
 
 
-# 收到websocket消息的处理
-
-
 def gen_params(appid, domain, random_threshold, max_tokens, messages):
-    """
-    通过appid和用户的提问来生成请参数
-    """
     data = {
         "header": {
             "app_id": appid,
@@ -167,4 +169,5 @@ def main():
 
 
 if __name__ == "__main__":
+    import_package("websocket_client", "websocket")
     main()
