@@ -12,9 +12,11 @@ local append_to_output = nil
 
 ---@type {name: ModelModule, model: string, params: table<string, string> | nil}[] A list of models
 M.models = {}
-M.selected_model = 0
+
+M.selected_model = nil
 
 M.setup_models = function()
+    M.selected_model = config.options.selected_model_index or 0
     for _, model_obj in ipairs(config.options.models) do
         local raw_model = model_obj.model
         local models

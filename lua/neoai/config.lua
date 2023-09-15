@@ -16,12 +16,18 @@ M.get_defaults = function()
             output_popup_height = 80, -- As percentage eg. 80%
             submit = "<Enter>",
         },
+        selected_model_index = 0,
         models = {
             {
                 name = "openai",
                 model = "gpt-3.5-turbo",
                 params = nil,
             },
+            {
+                name = "spark",
+                model = "v1",
+                params = nil,
+            }
         },
         register_output = {
             ["g"] = function(output)
@@ -35,9 +41,9 @@ M.get_defaults = function()
         prompts = {
             context_prompt = function(context)
                 return "Hey, I'd like to provide some context for future "
-                    .. "messages. Here is the code/text that I want to refer "
-                    .. "to in our upcoming conversations (TEXT/CODE ONLY):\n\n"
-                    .. context
+                .. "messages. Here is the code/text that I want to refer "
+                .. "to in our upcoming conversations (TEXT/CODE ONLY):\n\n"
+                .. context
             end,
         },
         mappings = {
@@ -67,10 +73,42 @@ M.get_defaults = function()
                         return open_api_key
                     end
                     local msg = M.options.open_ai.api_key.env
-                        .. " environment variable is not set, and open_api_key.value is empty"
+                    .. " environment variable is not set, and open_api_key.value is empty"
                     logger.error(msg)
                     error(msg)
                 end,
+            },
+        },
+        spark = {
+            random_threshold = 0.5,
+            max_tokens = 4096,
+            version = "v1",
+            api_key = {
+                appid_env = "SPARK_APPID",
+                secret_env = "SPARK_SECRET",
+                apikey_env = "SPARK_APIKEY",
+                appid = nil,
+                secret = nil,
+                apikey = nil,
+                get = function()
+                    if not M.options.spark.api_key.appid then
+                        M.options.spark.api_key.appid = os.getenv(M.options.spark.api_key.appid_env)
+                    end
+                    if not M.options.spark.api_key.secret then
+                        M.options.spark.api_key.secret = os.getenv(M.options.spark.api_key.secret_env)
+                    end
+                    if not M.options.spark.api_key.apikey then
+                        M.options.spark.api_key.apikey = os.getenv(M.options.spark.api_key.apikey_env)
+                    end
+                    if M.options.spark.api_key.appid and M.options.spark.api_key.secret and M.options.spark.api_key.apikey then
+                        return M.options.spark.api_key.appid, M.options.spark.api_key.secret, M.options.spark.api_key.apikey
+                    end
+                    local msg = M.options.spark.api_key.appid_env .. "/"
+                    .. M.options.spark.api_key.secret_env .. "/"
+                    .. M.options.spark.api_key.apikey_env .. " environment variable is not set"
+                    logger.error(msg)
+                    error(msg)
+                end
             },
         },
         shortcuts = {
@@ -80,9 +118,9 @@ M.get_defaults = function()
                 desc = "NeoAI fix text with AI",
                 use_context = true,
                 prompt = [[
-                    Please rewrite the text to make it more readable, clear,
-                    concise, and fix any grammatical, punctuation, or spelling
-                    errors
+                Please rewrite the text to make it more readable, clear,
+                concise, and fix any grammatical, punctuation, or spelling
+                errors
                 ]],
                 modes = { "v" },
                 strip_function = nil,
@@ -94,9 +132,9 @@ M.get_defaults = function()
                 use_context = false,
                 prompt = function()
                     return [[
-                        Using the following git diff generate a consise and
-                        clear git commit message, with a short title summary
-                        that is 75 characters or less:
+                    Using the following git diff generate a consise and
+                    clear git commit message, with a short title summary
+                    that is 75 characters or less:
                     ]] .. vim.fn.system("git diff --cached")
                 end,
                 modes = { "n" },
@@ -141,15 +179,32 @@ end
 ---@field value string | nil The value of the open api key to use, if nil then use the environment variable
 ---@field get fun(): string The function to get the open api key
 
+---@class Spark_Options
+---@field random_threshold float The random_threshold
+---@field max_tokens int The max tokens count
+---@field version ("v1" | "v2") The model version
+---@field api_key Spark_Key_Options The Spark api key options
+
+---@class Spark_Key_Options
+---@field appid_env string The environment variable to get the spark appid
+---@field secret_env string The environment variable to get the spark secret
+---@field apikey_env string The environment variable to get the spark apikey
+---@field appid string The spark appid
+---@field secret string The spark secret
+---@field apikey string The spark apikey
+---@field get fun(): string,string,string The function to get the open api key
+
 ---@class Options
 ---@field ui UI_Options UI configurations
 ---@field model string The OpenAI model to use by default @depricated
 ---@field models Model_Options[] A list of different model options to use. First element will be default
+---@field selected_model_index int Selected model index (started from zero)
 ---@field register_output table<string, fun(output: string): string> A table with a register as the key and a function that takes the raw output from the AI and outputs what you want to save into that register
 ---@field inject Inject_Options The inject options
 ---@field prompts Prompt_Options The custom prompt options
 ---@field open_api_key_env string The environment variable that contains the openai api key
 ---@field open_ai Open_AI_Options The open api key options
+---@field spark Spark_Options The Spark api key options
 ---@field mappings table<"select_up" | "select_down", nil|string|string[]> A table of actions with it's mapping(s)
 ---@field shortcuts Shortcut[] Array of shortcuts
 M.options = {}
