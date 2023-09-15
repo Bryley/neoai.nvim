@@ -1,5 +1,4 @@
- ba#!/usr/bin/env python3
-
+#!/usr/bin/env python3
 import _thread as thread
 import base64
 import datetime
@@ -46,7 +45,7 @@ class WSParam(object):
         signature_sha_base64 = base64.b64encode(
             signature_sha).decode(encoding='utf-8')
 
-        authorization_origin = f'apikey="{self.APIKey}", algorithm="hmac-sha256", headers="host date request-line", signature="{signature_sha_base64}"'
+        authorization_origin = f'api_key="{self.APIKey}", algorithm="hmac-sha256", headers="host date request-line", signature="{signature_sha_base64}"'
 
         authorization = base64.b64encode(
             authorization_origin.encode('utf-8')).decode(encoding='utf-8')
@@ -133,7 +132,6 @@ def Request(appid, secret, apikey, messages, version, random_threshold, max_toke
         print(json.dumps(data, ensure_ascii=False))
         code = data['header']['code']
         if code != 0:
-            #  print(f'请求错误: {code}, {data}')
             ws.close()
         else:
             choices = data["payload"]["choices"]

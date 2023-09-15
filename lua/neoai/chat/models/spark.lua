@@ -23,7 +23,6 @@ M._recieve_chunk = function(chunk, on_stdout_chunk)
 
         local ok, path = pcall(vim.json.decode, raw_json)
         if not ok then
-            on_stdout_chunk("decode error")
             goto continue
         end
 
@@ -75,7 +74,11 @@ M.send_to_model = function(chat_history, on_stdout_chunk, on_complete)
         return script_path:match("(.*/)")
     end
 
-    local py_script_path = get_script_dir() .. "/spark.py"
+    local py_script_path = get_script_dir() .. "spark.py"
+
+    print("chmod +x "..py_script_path)
+
+    os.execute("chmod +x "..py_script_path)
 
     chunks = {}
     raw_chunks = {}
