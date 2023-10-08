@@ -189,6 +189,11 @@ require("neoai").setup({
             name = "spark",
             model = "v1",
             params = nil,
+        },
+        {
+            name = "qianfan",
+            model = "ErnieBot-turbo",
+            params = nil,
         }
     },
     register_output = {
@@ -236,6 +241,12 @@ require("neoai").setup({
             appid_env = "SPARK_APPID",
             secret_env = "SPARK_SECRET",
             apikey_env = "SPARK_APIKEY",
+        },
+    },
+    qianfan = {
+        api_key = {
+            secret_env = "QIANFAN_SECRET",
+            apikey_env = "QIANFAN_APIKEY",
         },
     },
     shortcuts = {
@@ -333,6 +344,10 @@ end
 - `api_key.apikey` App api key, btained from an app created in the Open Platform console
 - `api_key.get` A function that retrieves the Spark API key. For an example implementation, refer to the [Setup](#Setup) section. It has the higher precedence.
 
+### Qianfan Options:
+- `api_key.secret_env` The environment variable containing the Qianfan secret key. The default value is "QIANFAN_SECRET".
+- `api_key.apikey_env` The environment variable containing the Qianfan api key. The default value is "QIANFAN_APIKEY".
+- `api_key.get` A function that retrieves the Qianfan API key. For an example implementation, refer to the [Setup](#Setup) section. It has the higher precedence.
 
 ### Mappings
  - `mappings`: A table containing the following actions that can be keys:

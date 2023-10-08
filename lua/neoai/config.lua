@@ -213,6 +213,9 @@ end
 ---@field version ("v1" | "v2") The model version
 ---@field api_key Spark_Key_Options The Spark api key options
 
+---@class Qianfan_Options
+---@field api_key Qianfan_Key_Options The Qianfan api key options
+
 ---@class Spark_Key_Options
 ---@field appid_env string The environment variable to get the spark appid
 ---@field secret_env string The environment variable to get the spark secret
@@ -221,6 +224,13 @@ end
 ---@field secret string The spark secret
 ---@field apikey string The spark apikey
 ---@field get fun(): string,string,string The function to get the open api key
+
+---@class Qianfan_Key_Options
+---@field secret_env string The environment variable to get the qianfan secret
+---@field apikey_env string The environment variable to get the qianfan apikey
+---@field secret string The qianfan secret
+---@field apikey string The qianfan apikey
+---@field get fun(): string,string The function to get the open api key
 
 ---@class Options
 ---@field ui UI_Options UI configurations
@@ -233,6 +243,7 @@ end
 ---@field open_api_key_env string The environment variable that contains the openai api key
 ---@field open_ai Open_AI_Options The open api key options
 ---@field spark Spark_Options The Spark api key options
+---@field qianfan Qianfan_Options The Qianfan api key options
 ---@field mappings table<"select_up" | "select_down", nil|string|string[]> A table of actions with it's mapping(s)
 ---@field shortcuts Shortcut[] Array of shortcuts
 M.options = {}
