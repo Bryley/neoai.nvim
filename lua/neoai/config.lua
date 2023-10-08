@@ -27,6 +27,11 @@ M.get_defaults = function()
                 name = "spark",
                 model = "v1",
                 params = nil,
+            },
+            {
+                name = "qianfan",
+                model = "ErnieBot-turbo",
+                params = nil,
             }
         },
         register_output = {
@@ -106,6 +111,29 @@ M.get_defaults = function()
                     local msg = M.options.spark.api_key.appid_env .. "/"
                     .. M.options.spark.api_key.secret_env .. "/"
                     .. M.options.spark.api_key.apikey_env .. " environment variable is not set"
+                    logger.error(msg)
+                    error(msg)
+                end
+            },
+        },
+        qianfan = {
+            api_key = {
+                secret_env = "QIANFAN_SECRET",
+                apikey_env = "QIANFAN_APIKEY",
+                secret = nil,
+                apikey = nil,
+                get = function()
+                    if not M.options.qianfan.api_key.secret then
+                        M.options.qianfan.api_key.secret = os.getenv(M.options.qianfan.api_key.secret_env)
+                    end
+                    if not M.options.qianfan.api_key.apikey then
+                        M.options.qianfan.api_key.apikey = os.getenv(M.options.qianfan.api_key.apikey_env)
+                    end
+                    if M.options.qianfan.api_key.secret and M.options.qianfan.api_key.apikey then
+                        return M.options.qianfan.api_key.secret, M.options.qianfan.api_key.apikey
+                    end
+                    local msg =  M.options.qianfan.api_key.secret_env .. "/"
+                    .. M.options.qianfan.api_key.apikey_env .. " environment variable is not set"
                     logger.error(msg)
                     error(msg)
                 end
