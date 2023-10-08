@@ -87,7 +87,6 @@ M.get_defaults = function()
         spark = {
             random_threshold = 0.5,
             max_tokens = 4096,
-            version = "v1",
             api_key = {
                 appid_env = "SPARK_APPID",
                 secret_env = "SPARK_SECRET",

@@ -64,7 +64,7 @@ end
 ---@param on_complete fun(err?: string, output?: string) Function to call when model has finished
 M.send_to_model = function(chat_history, on_stdout_chunk, on_complete)
     local appid, secret, apikey  = config.options.spark.api_key.get()
-    local ver = config.options.spark.version
+    local ver = config.options.models[config.options.selected_model_index+1].model
     local random_threshold = config.options.spark.random_threshold
     local max_tokens = config.options.spark.max_tokens
 

@@ -236,7 +236,6 @@ require("neoai").setup({
     spark = {
         random_threshold = 0.5,
         max_tokens = 4096,
-        version = "v1",
         api_key = {
             appid_env = "SPARK_APPID",
             secret_env = "SPARK_SECRET",
@@ -335,7 +334,6 @@ end
 ### Spark Options:
 - `random_threshold` Kernel sampling threshold. Used to determine the randomness of the outcome, the higher the value, the stronger the randomness, that is, the higher the probability of different answers to the same question
 - `max_tokens` The maximum length of tokens answered by the model
-- `version` The model version, `v1` or `v2`
 - `api_key.appid_env` The environment variable containing the Spark appid. The default value is "SPARK_APPID".
 - `api_key.secret_env` The environment variable containing the Spark secret key. The default value is "SPARK_SECRET".
 - `api_key.apikey_env` The environment variable containing the Spark api key. The default value is "SPARK_APIKEY".
@@ -425,6 +423,8 @@ visually selected text or the entire buffer if no selection is made.
 Triggers a NeoAI shortcut that is created in the config via it's name instead of
 a keybinding.
 
+### :NeoAISetSource
+Sets the source of the AI model.
 
 ## Roadmap:
 

@@ -103,6 +103,10 @@ end, {
 nargs = 0,
 })
 
+vim.api.nvim_create_user_command("NeoAISetSource", require("neoai").set_source, {
+    nargs = 0,
+})
+
 -- Context
 vim.api.nvim_create_user_command("NeoAIContextPrompt", function(opts)
     vim.ui.input({ prompt = "Context: " }, function(text)
