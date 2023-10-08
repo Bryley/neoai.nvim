@@ -114,19 +114,19 @@ M.inject = function(prompt, strip_function, start_line)
 
     local current_line = start_line or vim.api.nvim_win_get_cursor(0)[1]
     chat.send_prompt(
-        prompt,
-        function(txt, _)
-            -- Get differences between text
-            local txt1 = strip_function(chat.get_current_output())
-            local txt2 = strip_function(table.concat({ chat.get_current_output(), txt }, ""))
+    prompt,
+    function(txt, _)
+        -- Get differences between text
+        local txt1 = strip_function(chat.get_current_output())
+        local txt2 = strip_function(table.concat({ chat.get_current_output(), txt }, ""))
 
-            inject.append_to_buffer(string.sub(txt2, #txt1 + 1), current_line)
-        end,
-        false,
-        function(_)
-            inject.current_line = nil
-            vim.notify("NeoAI: Done generating AI response", vim.log.levels.INFO)
-        end
+        inject.append_to_buffer(string.sub(txt2, #txt1 + 1), current_line)
+    end,
+    false,
+    function(_)
+        inject.current_line = nil
+        vim.notify("NeoAI: Done generating AI response", vim.log.levels.INFO)
+    end
     )
 end
 
@@ -138,6 +138,26 @@ end
 M.context_inject = function(prompt, strip_function, line1, line2)
     line1, line2 = set_context(line1, line2)
     M.inject(prompt, strip_function, line2)
+end
+
+local make_prompt = function()
+    local ret = ""
+    for i, model_obj in ipairs(config.options.models) do
+        ret = ret .. i-1 .. "." .. model_obj.name .. "\n"
+    end
+    ret = ret .. "Choose:"
+    return ret
+end
+
+M.set_source = function()
+    vim.ui.input({ prompt = make_prompt() }, function(text)
+        if text == nil or string.len(text) == 0 then return end
+        local n = tonumber(text)
+        if n ~= nil and n >= 0 and n < #config.options.models then
+            config.options.selected_model_index = n
+            chat.setup_models()
+        end
+    end)
 end
 
 return M
