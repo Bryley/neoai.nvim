@@ -22,13 +22,11 @@ M._recieve_chunk = function(chunk, on_stdout_chunk)
 
     local ok, path = pcall(vim.json.decode, raw_json)
     if not ok then
-        on_stdout_chunk("111")
         return
     end
 
     path = path.result
     if path == nil then
-        on_stdout_chunk("222")
         return
     end
 
