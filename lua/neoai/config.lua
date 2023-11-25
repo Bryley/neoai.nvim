@@ -45,6 +45,7 @@ M.get_defaults = function()
             ["select_down"] = "<C-j>",
         },
         open_ai = {
+            display_name = "OpenAI",
             api_key = {
                 env = "OPENAI_API_KEY",
                 value = nil,
@@ -72,6 +73,7 @@ M.get_defaults = function()
                     error(msg)
                 end,
             },
+            url = "https://api.openai.com/v1/chat/completions",
         },
         shortcuts = {
             {
