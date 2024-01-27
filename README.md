@@ -221,6 +221,7 @@ require("neoai").setup({
             --     return key
             -- end,
         },
+        base_url = "https://api.openai.com/v1",
     },
     shortcuts = {
         {
@@ -304,6 +305,7 @@ end
 - `api_key.env`: The environment variable containing the OpenAI API key. The default value is "OPENAI_API_KEY".
 - `api_key.value`: The OpenAI API key, which takes precedence over `api_key .env`.
 - `api_key.get`: A function that retrieves the OpenAI API key. For an example implementation, refer to the [Setup](#Setup) section. It has the higher precedence.
+- `base_url`: The base URL of the OpenAI API. The default value is "https://api.openai.com/v1".
 
 ### Mappings
  - `mappings`: A table containing the following actions that can be keys:
