@@ -72,6 +72,7 @@ M.get_defaults = function()
                     error(msg)
                 end,
             },
+            base_url = "https://api.openai.com/v1",
         },
         shortcuts = {
             {
@@ -135,6 +136,7 @@ end
 
 ---@class Open_AI_Options
 ---@field api_key Open_AI_Key_Options The open api key options
+---@field base_url string The base url for requests
 
 ---@class Open_AI_Key_Options
 ---@field env string The environment variable to get the open api key from
