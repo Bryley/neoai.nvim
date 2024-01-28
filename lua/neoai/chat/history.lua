@@ -24,6 +24,8 @@ function ChatHistory:new(model, params, context)
     if context ~= nil then
         local context_prompt = config.options.prompts.context_prompt(context)
         self:set_prompt(context_prompt)
+    else
+        self:set_prompt(config.options.prompts.default_prompt())
     end
     return obj
 end

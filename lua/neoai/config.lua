@@ -12,7 +12,7 @@ M.get_defaults = function()
         ui = {
             output_popup_text = "NeoAI",
             input_popup_text = "Prompt",
-            width = 30, -- As percentage eg. 30%
+            width = 30,               -- As percentage eg. 30%
             output_popup_height = 80, -- As percentage eg. 80%
             submit = "<Enter>",
         },
@@ -34,10 +34,14 @@ M.get_defaults = function()
         },
         prompts = {
             context_prompt = function(context)
-                return "Hey, I'd like to provide some context for future "
+                return "Please only follow instructions or answer to questions. Be concise. "
+                    .. "I'd like to provide some context for future "
                     .. "messages. Here is the code/text that I want to refer "
-                    .. "to in our upcoming conversations (TEXT/CODE ONLY):\n\n"
+                    .. "to in our upcoming conversations:\n\n"
                     .. context
+            end,
+            default_prompt = function()
+                return "Please only follow instructions or answer to questions. Be concise."
             end,
         },
         mappings = {
@@ -45,6 +49,7 @@ M.get_defaults = function()
             ["select_down"] = "<C-j>",
         },
         open_ai = {
+            display_name = "OpenAI",
             api_key = {
                 env = "OPENAI_API_KEY",
                 value = nil,
@@ -72,6 +77,7 @@ M.get_defaults = function()
                     error(msg)
                 end,
             },
+            url = "https://api.openai.com/v1/chat/completions",
         },
         shortcuts = {
             {
@@ -122,7 +128,8 @@ end
 ---@field cutoff_width integer | nil When injecting if the text becomes longer than this then it should go to a new line, if nil then ignore
 
 ---@class Prompt_Options
----@field context_prompt fun(context: string) string Prompt to generate the prompt that should be used when using Context modes
+---@field context_prompt fun(context: string): string Prompt to generate the prompt that should be used when using Context modes
+---@field default_prompt fun(): string string Prompt to generate the prompt that should be used as default prompt
 
 ---@class Shortcut
 ---@field name string The name of the shortcut, can trigger using :NeoAIShortcut <name>

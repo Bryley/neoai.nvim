@@ -1,10 +1,13 @@
 local utils = require("neoai.utils")
 local config = require("neoai.config")
 
+--- This model definition supports OpenAI - and compatible APIs. The
+--- configuration defaults to OpenAI
+
 ---@type ModelModule
 local M = {}
 
-M.name = "OpenAI"
+M.name = config.options.open_ai.display_name
 
 M._chunks = {}
 local raw_chunks = {}
@@ -53,6 +56,7 @@ end
 ---@param on_complete fun(err?: string, output?: string) Function to call when model has finished
 M.send_to_model = function(chat_history, on_stdout_chunk, on_complete)
     local api_key = config.options.open_ai.api_key.get()
+    local url = config.options.open_ai.url
 
     local data = {
         model = chat_history.model,
@@ -67,7 +71,7 @@ M.send_to_model = function(chat_history, on_stdout_chunk, on_complete)
         "--silent",
         "--show-error",
         "--no-buffer",
-        "https://api.openai.com/v1/chat/completions",
+        url,
         "-H",
         "Content-Type: application/json",
         "-H",

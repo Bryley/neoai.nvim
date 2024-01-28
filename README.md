@@ -195,8 +195,12 @@ require("neoai").setup({
         cutoff_width = 75,
     },
     prompts = {
+        default_prompt = function()
+            return "Please only follow instructions or answer to questions. Be concise."
+        end,
         context_prompt = function(context)
-            return "Hey, I'd like to provide some context for future "
+            return "Please only follow instructions or answer to questions. Be concise. "
+                .. "I'd like to provide some context for future "
                 .. "messages. Here is the code/text that I want to refer "
                 .. "to in our upcoming conversations:\n\n"
                 .. context
