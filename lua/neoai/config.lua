@@ -72,6 +72,33 @@ M.get_defaults = function()
                     error(msg)
                 end,
             },
+            base_url = {
+                env = "OPENAI_BASE_URL",
+                value = nil,
+                get = function()
+                    local base_url = nil
+                    if M.options.open_ai.base_url.value then
+                        base_url = M.options.open_ai.base_url.value
+                    else
+                        local env_name
+                        if M.options.base_url_env then
+                            env_name = M.options.base_url_env
+                            logger.deprecation("config.base_url_env", "config.open_ai.base_url.env")
+                        else
+                            env_name = M.options.open_ai.base_url.env
+                        end
+                        base_url = os.getenv(env_name)
+                    end
+
+                    if base_url then
+                        return base_url
+                    end
+                    local msg = M.options.open_ai.base_url.env
+                        .. " environment variable is not set, and base_url.value is empty"
+                    logger.error(msg)
+                    error(msg)
+                end,
+            }
         },
         shortcuts = {
             {
@@ -135,11 +162,17 @@ end
 
 ---@class Open_AI_Options
 ---@field api_key Open_AI_Key_Options The open api key options
+---@field base_url Open_AI_Key_Options The open api key options
 
 ---@class Open_AI_Key_Options
 ---@field env string The environment variable to get the open api key from
 ---@field value string | nil The value of the open api key to use, if nil then use the environment variable
 ---@field get fun(): string The function to get the open api key
+
+---@class Open_Base_Url_Options
+---@field env string The environment variable to get the open base url from
+---@field value string | nil The value of the open base url to use, if nil then use the environment variable
+---@field get fun(): string The function to get the open base url
 
 ---@class Options
 ---@field ui UI_Options UI configurations
