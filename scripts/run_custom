@@ -1,0 +1,5 @@
+#!/bin/sh
+
+nvim -u scripts/custom_init.lua
+
+# vim: set filetype=shell

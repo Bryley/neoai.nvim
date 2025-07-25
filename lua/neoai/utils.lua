@@ -21,9 +21,9 @@ end
 
 ---@param output string
 M.save_to_registers = function(output)
-    for register, strip_func in pairs(config.options.register_output) do
-        vim.fn.setreg(register, strip_func(output))
-    end
+	for register, strip_func in pairs(config.options.register_output) do
+		vim.fn.setreg(register, strip_func(output))
+	end
 end
 
 ---Executes command getting stdout chunks

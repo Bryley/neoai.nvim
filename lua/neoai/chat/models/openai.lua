@@ -6,10 +6,11 @@ local M = {}
 
 M.name = "OpenAI"
 
-local chunks = {}
+M._chunks = {}
 local raw_chunks = {}
-M.get_current_output = function ()
-    return table.concat(chunks, "")
+
+M.get_current_output = function()
+    return table.concat(M._chunks, "")
 end
 
 ---@param chunk string
@@ -42,7 +43,7 @@ M._recieve_chunk = function(chunk, on_stdout_chunk)
         end
         on_stdout_chunk(path)
         -- append_to_output(path, 0)
-        table.insert(chunks, path)
+        table.insert(M._chunks, path)
         ::continue::
     end
 end
@@ -75,6 +76,7 @@ M.send_to_model = function (chat_history, on_stdout_chunk, on_complete)
     }, function (chunk)
         M._recieve_chunk(chunk, on_stdout_chunk)
     end, function (err, _)
+
         local total_message = table.concat(raw_chunks, "")
         local ok, json = pcall(vim.json.decode, total_message)
         if ok then

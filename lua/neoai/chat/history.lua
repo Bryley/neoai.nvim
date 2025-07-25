@@ -2,20 +2,23 @@ local config = require("neoai.config")
 
 ---@class ChatHistory
 ---@field model string The name of the model
+---@field params table<string, string> The params for the model
 ---@field messages { role: "user" | "assistant", content: string }[] The message history
-local ChatHistory = { model = "", messages = {} }
+local ChatHistory = { model = "", params = {}, messages = {} }
 
 ---Create new chat history object
 ---@param model string The model to use
+---@param params table<string, string> | nil The params for the model
 ---@param context string | nil The context to use
 ---@return ChatHistory
-function ChatHistory:new(model, context)
+function ChatHistory:new(model, params, context)
     local obj = {}
 
     setmetatable(obj, self)
     self.__index = self
 
     self.model = model
+    self.params = params or {}
     self.messages = {}
 
     if context ~= nil then

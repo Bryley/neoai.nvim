@@ -10,7 +10,7 @@ M.context = nil
 M.chat_history = nil
 local append_to_output = nil
 
----@type {name: ModelModule, model: string}[] A list of models
+---@type {name: ModelModule, model: string, params: table<string, string> | nil}[] A list of models
 M.models = {}
 M.selected_model = 0
 
@@ -27,13 +27,15 @@ M.setup_models = function()
             table.insert(M.models, {
                 name = require("neoai.chat.models." .. model_obj.name),
                 model = model,
+                params = model_obj.params,
             })
         end
     end
 end
 
 M.new_chat_history = function ()
-    M.chat_history = ChatHistory:new(M.get_current_model().model, M.context)
+    local model = M.get_current_model()
+    M.chat_history = ChatHistory:new(model.model, model.params, M.context)
 end
 
 M.select_next_model = function ()
@@ -43,7 +45,7 @@ M.select_next_model = function ()
 end
 
 ---Gets the current selected model
----@return { name: ModelModule, model: string } current_model The current model
+---@return { name: ModelModule, model: string, params: table<string, string> | nil } current_model The current model
 M.get_current_model = function ()
     return M.models[M.selected_model+1]
 end
