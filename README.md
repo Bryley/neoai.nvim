@@ -178,12 +178,23 @@ require("neoai").setup({
         output_popup_height = 80, -- As percentage eg. 80%
         submit = "<Enter>", -- Key binding to submit the prompt
     },
+    selected_model_index = 0,
     models = {
         {
             name = "openai",
             model = "gpt-3.5-turbo",
             params = nil,
         },
+        {
+            name = "spark",
+            model = "v1",
+            params = nil,
+        },
+        {
+            name = "qianfan",
+            model = "ErnieBot-turbo",
+            params = nil,
+        }
     },
     register_output = {
         ["g"] = function(output)
@@ -220,6 +231,21 @@ require("neoai").setup({
             --     key = string.gsub(key, "\n", "")
             --     return key
             -- end,
+        },
+    },
+    spark = {
+        random_threshold = 0.5,
+        max_tokens = 4096,
+        api_key = {
+            appid_env = "SPARK_APPID",
+            secret_env = "SPARK_SECRET",
+            apikey_env = "SPARK_APIKEY",
+        },
+    },
+    qianfan = {
+        api_key = {
+            secret_env = "QIANFAN_SECRET",
+            apikey_env = "QIANFAN_APIKEY",
         },
     },
     shortcuts = {
@@ -305,6 +331,22 @@ end
 - `api_key.value`: The OpenAI API key, which takes precedence over `api_key .env`.
 - `api_key.get`: A function that retrieves the OpenAI API key. For an example implementation, refer to the [Setup](#Setup) section. It has the higher precedence.
 
+### Spark Options:
+- `random_threshold` Kernel sampling threshold. Used to determine the randomness of the outcome, the higher the value, the stronger the randomness, that is, the higher the probability of different answers to the same question
+- `max_tokens` The maximum length of tokens answered by the model
+- `api_key.appid_env` The environment variable containing the Spark appid. The default value is "SPARK_APPID".
+- `api_key.secret_env` The environment variable containing the Spark secret key. The default value is "SPARK_SECRET".
+- `api_key.apikey_env` The environment variable containing the Spark api key. The default value is "SPARK_APIKEY".
+- `api_key.appid` App appid, obtained from an app created in the Open Platform console
+- `api_key.secret` App secret key, btained from an app created in the Open Platform console
+- `api_key.apikey` App api key, btained from an app created in the Open Platform console
+- `api_key.get` A function that retrieves the Spark API key. For an example implementation, refer to the [Setup](#Setup) section. It has the higher precedence.
+
+### Qianfan Options:
+- `api_key.secret_env` The environment variable containing the Qianfan secret key. The default value is "QIANFAN_SECRET".
+- `api_key.apikey_env` The environment variable containing the Qianfan api key. The default value is "QIANFAN_APIKEY".
+- `api_key.get` A function that retrieves the Qianfan API key. For an example implementation, refer to the [Setup](#Setup) section. It has the higher precedence.
+
 ### Mappings
  - `mappings`: A table containing the following actions that can be keys:
 
@@ -381,6 +423,8 @@ visually selected text or the entire buffer if no selection is made.
 Triggers a NeoAI shortcut that is created in the config via it's name instead of
 a keybinding.
 
+### :NeoAISetSource
+Sets the source of the AI model.
 
 ## Roadmap:
 
