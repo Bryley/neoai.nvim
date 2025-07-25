@@ -52,7 +52,7 @@ end
 ---@param on_stdout_chunk fun(chunk: string) Function to call whenever a stdout chunk occurs
 ---@param on_complete fun(err?: string, output?: string) Function to call when model has finished
 M.send_to_model = function (chat_history, on_stdout_chunk, on_complete)
-    local api_key = os.getenv(config.options.open_api_key_env)
+    local api_key = os.getenv(config.options.open_ai.api_key.get())
     if not api_key then
       on_complete("OpenAI API Key is missing.", nil)
       return

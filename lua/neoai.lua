@@ -39,8 +39,8 @@ M.setup = function(options)
 end
 
 ---Toggles opening and closing neoai window
----@param toggle boolean | nil If true will open GUI and false will close, nil will toggle
----@param prompt string | nil If set then this prompt will be sent to the GUI if toggling on
+---@param toggle boolean | nil If true will open GUI and false will close, nil will toggle.
+---@param prompt string | nil If set then this prompt will be sent to the GUI if toggling on.
 ---@return boolean true if opened and false if closed
 M.toggle = function(toggle, prompt)
     local open = (toggle ~= "" and toggle) or (toggle == "" and not ui.is_open())
@@ -60,7 +60,7 @@ end
 
 ---Smart focus, if closed then will open on GUI, if opened and focused then it
 ---will close GUI and if opened and not focused then it will focus on the GUI.
----@param prompt string The prompt to inject, to inject no prompt just do empty string
+---@param prompt string The prompt to inject, to inject no prompt just do empty string.
 M.smart_toggle = function(prompt)
     local send_args = function()
         if not utils.is_empty(prompt) then
@@ -81,10 +81,10 @@ M.smart_toggle = function(prompt)
 end
 
 ---Toggles the GUI in Context mode
----@param toggle boolean | nil True will force open, False will force close, nil will toggle
----@param prompt string The prompt to inject into the GUI if any (otherwise specify an empty string)
----@param line1 integer | nil The first line number for context range otherwise will use visual selection
----@param line2 integer | nil The second line number for context range otherwise will use visual selection
+---@param toggle boolean | nil True will force open, False will force close, nil will toggle.
+---@param prompt string The prompt to inject into the GUI if any (otherwise specify an empty string).
+---@param line1 integer | nil The first line number for context range otherwise will use visual selection.
+---@param line2 integer | nil The second line number for context range otherwise will use visual selection.
 ---@return boolean True if was opened
 M.context_toggle = function (toggle, prompt, line1, line2)
     set_context(line1, line2)
@@ -92,19 +92,19 @@ M.context_toggle = function (toggle, prompt, line1, line2)
 end
 
 ---Smart toggles context GUI
----@param prompt string The prompt to inject into the GUI if any (otherwise specify an empty string)
----@param line1 integer | nil The first line number for context range otherwise will use visual selection
----@param line2 integer | nil The second line number for context range otherwise will use visual selection
+---@param prompt string The prompt to inject into the GUI if any (otherwise specify an empty string).
+---@param line1 integer | nil The first line number for context range otherwise will use visual selection.
+---@param line2 integer | nil The second line number for context range otherwise will use visual selection.
 M.context_smart_toggle = function (prompt, line1, line2)
     set_context(line1, line2)
     M.smart_toggle(prompt)
 end
 
 ---Sends prompt and injects the response straight back into the buffer without
----opening the GUI
----@param prompt string The prompt to send to the AI
----@param strip_function (fun(output: string): string) | nil A function that strips the output
----@param start_line integer | nil The line to start injecting onto (After inserting 2 newlines), nil = current selected line
+---opening the GUI.
+---@param prompt string The prompt to send to the AI.
+---@param strip_function (fun(output: string): string) | nil A function that strips the output.
+---@param start_line integer | nil The line to start injecting onto (After inserting 2 newlines), nil = current selected line.
 M.inject = function(prompt, strip_function, start_line)
     chat.new_chat_history()
 
@@ -131,10 +131,10 @@ M.inject = function(prompt, strip_function, start_line)
 end
 
 ---Same as inject except uses a context
----@param prompt string The prompt to send to the AI
----@param strip_function (fun(output: string): string) | nil A function that strips the output
----@param line1 integer | nil The first line num in the range if nil will use '<
----@param line2 integer | nil The second line num in the range if nil will use '>
+---@param prompt string The prompt to send to the AI.
+---@param strip_function (fun(output: string): string) | nil A function that strips the output.
+---@param line1 integer | nil The first line num in the range if nil will use '<.
+---@param line2 integer | nil The second line num in the range if nil will use '>.
 M.context_inject = function(prompt, strip_function, line1, line2)
     line1, line2 = set_context(line1, line2)
     M.inject(prompt, strip_function, line2)
